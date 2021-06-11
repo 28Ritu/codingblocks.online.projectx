@@ -1,56 +1,49 @@
-<div class="o-content-section">
-    <div class="header flex-row">
-        <div class="section-toggler flex-row">
-            <div class="button-dashed" {{action 'toggleSideBar'}}>
-              <button>
-                X Table of Content
-              </button> 
+<div class="timeline" id="timelineContainer">  
+  <Player::PlayerHeader  
+    @run={{run}} />
+
+    
+    <div class="row no-gutters timeline__main-area">
+      <div class="col-lg-3 col-12 timeline__main-area__content-bar pr-4 order-2" id="contentScrollContainer">
+        <div class="position-sticky d-lg-block d-none">
+          <h4 class="bold font-mds" id="start-player-tour">
+            Course Content 
+            <i class="far fa-question-circle icon-hover-fill pointer" title="Take Tour" {{action "startTour"}} ></i>
+          </h4>
+          <div class="divider-h"></div>
+        </div>
+
+         <div class="d-lg-none timeline__main-area__content-bar__title--phone" {{action 'toggleContentList'}} role="button">
+            <div class="row no-gutters justify-content-between align-items-center">
+              <div class="col-10">
+                <h6 class="bold gradient-text-orange">{{currentSection.name}}</h6>
+                <div class="normal mt-1">{{currentContent.title}}</div>
+              </div>
+              <i class="far fa-bookmark fa-lg"></i>
             </div>
         </div>
-        {{outlet "heading"}}
-    </div>
-
-    <div class="content-section">
-      <div class="content {{if (not sidebarCollapsed) 'collapse'}}">
-        {{outlet}}
-      </div>
-        <div class="section {{if sidebarCollapsed 'collapse'}}">
-          <div class="section-collapsor row justify-content-between" {{action 'toggleAccordian'}}>
-            <div class="col-10 align-self-center">TABLE OF CONTENTS</div>
-            <div class="align-self-center">
-              <i class="fas {{if accordianCollapsed 'fa-chevron-down' 'fa-chevron-up'}}"></i>
+        
+        <div class="collapsible-content {{if contentListCollpased 'collapsible-content--hidden'}}">
+          <div class="d-lg-none pt-4">
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="font-normal mr-3">Course Progress</span>
+              <div class="flex-1">
+                <progress value={{runAttempt.progressPercent}} max="100" class="progress-orange"></progress>
+              </div>
+              <span class="bold ml-3">{{runAttempt.progressPercent}}%</span>
             </div>
           </div>
-          {{#liquid-spacer growDuration=250 class="black-background"}}
-            {{#unless accordianCollapsed}}
-              <div class="o-accordian">
-                  {{#each sections as |section|}}
-                      <div class="accordian-ul" data-show="true">
-                          {{#accordian-head title=section.name completed=section.doneContents.length total=section.contents.length}}
-                              {{#each section.contents as |content|}}
-                                  <div data-completed="{{content.isDone}}" class="accordian-li" {{action (action 'transitionToContent' content.id)}}>
-                                      <div class="li-left flex-row">
-                                          <div class="accordian-li-type">
-                                            <div class="content-icon {{content.iconClass}}-{{if content.isDone 'green-dark' 'red-dark'}}"></div>
-                                          </div>
-                                          <div class="accordian-li-heading">
-                                              {{content.payload.name}}
-                                          </div>
-                                      </div>
-
-                                      <div class="flex-row">
-                                          <div class="circle-back">
-                                              <div class="circle-front" {{action 'toggleProgress' content bubbles=false}}></div>
-                                          </div>
-                                      </div>
-                                  </div>
-                              {{/each}}
-                          {{/accordian-head}}
-                      </div>
-                  {{/each}}
-              </div>
-            {{/unless}}
-          {{/liquid-spacer}}
+          <Player::PlayerSectionList 
+            @currentSectionId={{currentSectionId}}
+            @sections={{sections}} />
         </div>
+      </div>
+      
+        {{outlet}}
+    </div>
+    <div class="d-lg-none d-block px-4">
+      {{#if player.isActive}}
+        <Player::PlayerTabs />
+      {{/if}}
     </div>
 </div>

@@ -1,10 +1,11 @@
-import Ember from 'ember';
+import { helper } from '@ember/component/helper';
 
 export function getEmbeded(param) {
-  if(param[0])
-    return (param[0]).replace('watch?v=','embed/')
+  if(param[0]){
+    return (param[0]).replace('watch?v=','embed/').concat('?autoplay=1&rel=0&enablejsapi=1')
+  }
   else
     return null
 }
 
-export default Ember.Helper.helper(getEmbeded);
+export default helper(getEmbeded);

@@ -4,12 +4,9 @@ module.exports = function(environment) {
   let ENV = {
     modulePrefix: 'codingblocks-online',
     podModulePrefix: 'codingblocks-online/pods',
-    environment,
-    rootURL: '/',
+    environment: environment,
+    rootURL: '/app/',
     locationType: 'auto',
-    sentry: {
-      dsn: 'http://4847af8c7e2d4de8b5eafcb01093ac68@sentry.cb.lk/20'
-    },
     'ember-simple-auth-token': {
       identificationField: 'code',
       passwordField: 'code',
@@ -21,10 +18,40 @@ module.exports = function(environment) {
     },
     hbBaseUrl: "https://hack.codingblocks.com",
     discussBaseUrl: 'https://discuss.codingblocks.com',
+    metricsAdapters: [
+      {
+        name: 'FacebookPixel',
+        environments: ['production'],
+        config: {
+          id: '1947467048859851'
+        }
+      },
+      {
+        name: 'GoogleTagManager',
+        environments: ['production', 'development'],
+        config: {
+          id: 'GTM-TWLQ78S'
+        }
+      },
+      {
+        name: 'GoogleAnalytics',
+        environments: ['production', 'development'],
+        config: {
+          id: 'UA-83327907-12'
+        }
+      },
+      {
+        name: 'gtag',
+        environments: ['production', 'development'],
+        config: {
+          id: 'UA-83327907-12'
+        }
+      }
+    ],
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
-        // e.g. 'with-controller': true
+        // e.g. EMBER_NATIVE_DECORATOR_SUPPORT: true
       },
       EXTEND_PROTOTYPES: {
         // Prevent Ember Data from overriding Date.parse.
@@ -35,8 +62,27 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
-    }
+    },
+    vdoplayerTheme: '9ae8bbe8dd964ddc9bdb932cca1cb59a'
   };
+
+  ENV.dukaanUrl = 'https://dukaan.codingblocks.xyz'
+
+  ENV['ember-toggle'] = {
+    includedThemes: ['ios'],
+    defaultTheme: 'ios',
+    defaultSize: 'medium'
+  }
+
+  ENV.firebase = {
+    apiKey: 'AIzaSyD1bGr7kMHEWxK0X-oIKWfsZ29QNhjJA5U',
+    databaseURL: "https://cb-ide.firebaseio.com/",
+    projectId: "cb-ide"
+  }
+
+  ENV.talkjs = {
+    appId: 'tZFACp8h'
+  }
 
   if (environment === 'development') {
     // ENV.APP.LOG_RESOLVER = true;
@@ -44,11 +90,18 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
+    
     ENV.apiHost = 'http://localhost:3000'
-    ENV.publicUrl = 'http://localhost:4200';
+    // ENV.publicUrl = 'http://localhost:4200';
+    ENV.publicUrl = 'http://test.online'
     ENV.clientId = 7642172843
     ENV.oneauthURL = 'https://account.codingblocks.com'
-    ENV.hackApiHost = 'https://api.cb.lk'
+    ENV.hackApiHost = 'http://test.hackbackend'
+    ENV.googleAnalytics = {
+      webPropertyId: 'UA-83327907-12'
+    }
+    ENV.OnesignalAppId = 'ae392a03-3c7d-498b-94aa-2a7c17f7db0c'
+    ENV.discordinatorUrl = 'http://localhost:5050'
   }
 
   if (environment === 'test') {
@@ -64,26 +117,56 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-    ENV.apiHost = 'https://api-online.cb.lk'
+    ENV.apiHost = 'https://online-api.codingblocks.com'
     ENV.publicUrl = 'https://online.codingblocks.com';
     ENV.clientId = 5633768694
     ENV.oneauthURL = 'https://account.codingblocks.com'
-    ENV.hackApiHost = 'https://api.cb.lk'
-    ENV.sentry.dsn = 'http://28a62ac6a0194a8381f4a6df014fa5ed@sentry.cb.lk/21'
+    ENV.hackApiHost = 'https://hack-api.codingblocks.com'
+    ENV.hiringblocksUrl = 'https://hire.codingblocks.com'
+    ENV.googleAnalytics = {
+      webPropertyId: 'UA-83327907-12'
+    }
+    ENV["ember-facebook-pixel"] = {
+      id: '1947467048859851'
+    };
+    ENV.dukaanUrl = 'https://dukaan.codingblocks.com'
+    ENV.firebase = {
+      apiKey: 'AIzaSyBmhZWgSNL32DCYIouM_iPs4rbtq-NPugo',
+      databaseURL: "https://cb-ide-79a73.firebaseio.com/",
+      projectId: "cb-ide-79a73"
+    }
+    ENV.talkjs = {
+      appId: '2LhQvB3j'
+    }
+    ENV.OnesignalAppId = '01d75aac-5123-4145-b655-ba8d27c5dc13'
+    ENV.discordinatorUrl = 'https://discordinator.codingblocks.com'
   }
 
   if (environment === 'staging') {
-    ENV.apiHost = 'https://codingblocks-online-v2-staging.herokuapp.com'
+    ENV.apiHost = 'https://api-online.codingblocks.xyz'
     ENV.publicUrl = 'https://online.codingblocks.xyz';
     ENV.clientId = 5169892443
     ENV.oneauthURL = 'https://account.codingblocks.com'
-    ENV.hackApiHost = 'https://api.codingblocks.xyz' 
-    ENV.sentry.dsn = 'http://a1e58068dc5c48edb9b313b1efbe22ec@sentry.cb.lk/19'
+    ENV.hackApiHost = 'https://hack-api.codingblocks.xyz'
+    ENV.hiringblocksUrl = 'https://hire.codingblocks.xyz'
+    ENV.discordinatorUrl = 'https://discordinator.codingblocks.com'
+
+    ENV.talkjs = {
+      appId: '2LhQvB3j'
+    }
+  }
+
+  if (process.env.oss) {
+    ENV.clientId = 8225714181
+    ENV.apiHost = 'https://api-online-public.codingblocks.xyz'
   }
 
   ENV['ember-simple-auth-token'].tokenPropertyName = 'jwt'
   ENV['ember-simple-auth-token'].serverTokenEndpoint = `${ENV.apiHost}/api/jwt/login/`
-  ENV['ember-simple-auth-token'].serverTokenRefreshEndpoint = `${ENV.apiHost}/api/jwt/refresh/`
+  ENV['ember-simple-auth-token'].serverTokenRefreshEndpoint = `${ENV.apiHost}/api/jwt/refresh/?client=web`
 
   return ENV;
 };
+
+
+// 341997496266637

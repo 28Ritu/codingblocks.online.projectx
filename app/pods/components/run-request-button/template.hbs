@@ -1,0 +1,19 @@
+{{#if request}}
+  {{#if isPending}}
+    <button class="button-solid">Request Pending</button>
+  {{else if  isDeclined}}
+    <button class="button-solid">Request Declined</button>
+  {{else if  isAccepted}}
+    <button class="button-solid">
+      {{#link-to "classroom.timeline" run.course.id run.id tagName="button" activeClass=""}} <i class="fas fa-play"></i> Resume
+      {{/link-to}}
+    </button>
+  {{/if}}
+
+{{else}} {{! we don't have any request by this user}}
+  
+    <button class="button-solid" {{action 'addRequest'}}>
+      Request
+    </button>
+  
+{{/if}}

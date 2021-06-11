@@ -1,0 +1,28 @@
+<div id="player-content-fullscreen-container" class="col-lg-9 timeline__main-area__video-area no-scrollbar order-lg-12 order-1">
+  {{#if (not isMobileOrEmailVerified)}}
+    <Blockers::VerifyEmail />
+  {{else if hasEmptyName}}
+    <Blockers::FillupName />
+  {{else if model.payload}} 
+    {{!-- render content outlet and doubts and notes --}}
+    <div>
+      <div>
+        <WAsync @promise={{this.model.progress}} as |progress|>
+          <ContentFeedback @progress={{progress}} />
+        </WAsync>
+        {{outlet}}
+      </div>
+      {{#unless (eq model.contentable 'course-recommend')}}
+      <div class="d-lg-block d-none">
+        <Player::PlayerTabs />
+      </div>
+      {{/unless}}
+    </div>
+  {{else if (not run.isStarted)}}
+    <UnstartedContent @run={{run}} />
+  {{else if runAttempt.paused}}
+    <Blockers::PausedRunAttempt @runAttempt={{runAttempt}} />
+  {{else}}
+    <LockedContent @course={{run.course}} />
+  {{/if}}
+</div>

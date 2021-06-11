@@ -1,13 +1,9 @@
 import Route from '@ember/routing/route';
 
-export default class CoursesRouter extends  Route {
-    model () {
-        return this.store.query ('course', {
-          include: 'runs'
-        })
+export default class CoursesRouter extends Route {
+  queryParams = {
+    org: {
+      replace: true
     }
-
-    setupController (controller, model) {
-        controller.set ("courses", model)
-    }
+  }
 }

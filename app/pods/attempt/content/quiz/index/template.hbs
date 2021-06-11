@@ -1,0 +1,11 @@
+<div class="p-3 c-qna">
+  <h4 class="bold">{{quiz.title}}</h4>
+  <div class="font-sm mt-3">
+    Total Questions: {{quiz.questions.length}} | Maximum Marks: {{multiply quiz.questions.length 10}} | Question Type: MCQ
+  </div>
+  <div class="mt-5">
+    <button class="button-solid button-orange" {{action 'startQuiz'}}>
+      Start Quiz
+    </button>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+<div class="top">
+  <div class="new-doubt">
+    <div class="head">
+      <span>Ask a Doubt</span>
+      <button class="button-solid {{if askDoubtTask.isRunning 'disabled'}}" {{action (perform askDoubtTask)}} >Post Doubt</button>
+    </div>
+
+    {{#if err}}
+      <div class="red card-md t-align-c pt-3"><i class="fas fa-exclamation-triangle"></i> {{{err}}} </div>
+    {{/if}}
+
+    <div class="input-group">
+      {{input type="text" placeholder="Title" value=title}}
+      {{textarea placeholder="Description" rows="2" value=body}}
+    </div>
+  </div>
+
+  <div class="nav">
+    <div role="button" class="tab {{if (eq activeTab "PENDING") "active"}}" {{action "setActiveTab" "PENDING"}}>Unresolved({{unresolved.length}})</div>
+    <div role="button" class="tab {{if (eq activeTab "RESOLVED") "active"}}" {{action "setActiveTab" "RESOLVED"}}>Resolved({{resolved.length}})</div>
+  </div>
+</div>
+
+<div class="bottom">
+  {{#if  (eq activeTab "PENDING")}}
+    {{#if (not unresolved.length)}}
+      <div class="p-3 t-align-c">You have no unresolved doubts.</div> 
+    {{/if}}
+  {{else}}
+    {{#if (not resolved.length)}}
+      <div class="p-3 t-align-c">You have no resolved doubts.</div>
+    {{/if}}
+  {{/if}}
+  
+  {{#let (if (eq activeTab "RESOLVED") resolved unresolved) as |visibleDoubts|}}
+    {{#each visibleDoubts as |doubt|}}
+      {{doubt-view-attempt doubt=doubt comments=doubt.comments}}
+    {{/each}}
+  {{/let}}
+</div>

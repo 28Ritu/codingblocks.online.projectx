@@ -1,0 +1,74 @@
+<div class="c-qna-attempt bg-grey-darker row" style="min-height: 506px;">
+  <div class="quiz-content col-9">
+    <div class="heading bold font-mds">
+      <span class="sno">Q{{q}}.</span>
+      {{currentQuestion.title}}
+    </div>
+
+    <div class="question py-4">
+      <span class="text font-sm">
+        {{markdown-to-html currentQuestion.description class="d-inline" extensions='katex'}}
+      </span>
+    </div>
+
+    <div class="py-4">
+      {{#each currentQuestion.choices as |choice|}}
+        <div class="input-radio gradient-input">
+          <input
+            checked={{find choice.id currentQuestion.markedChoices}} 
+            type="radio" 
+            id={{choice.id}}
+            onclick={{action (perform markChoice) currentQuestion choice}} />
+          <label for="{{choice.id}}">
+            {{markdown-to-html choice.title extensions='katex' class="ml-3"}}
+          </label>
+        </div>
+      {{/each}}
+    </div>
+
+    <div class="navigation t-align-c font-sm">
+      
+      {{#if (gt q 1)}}
+        <span>
+          <img src="https://minio.codingblocks.com/amoeba/left-angle-white.svg" alt="Prev">
+          <a {{action 'changeQuestion' -1}} class="white pointer ml-2" >Previous</a>
+        </span>
+      {{else}}
+      <span>
+        <img src="https://minio.codingblocks.com/amoeba/left-angle-grey.svg" alt="Prev">
+        <a class="grey ml-2">Previous</a>   
+      </span>
+      {{/if}}
+        <span>{{q}} of {{quiz.questions.length}}</span>
+      {{#if (lt q quiz.questions.length)}}
+      <span>
+        <a {{action 'changeQuestion' 1}} class="pointer white mr-2">Next</a>
+        <img src="https://minio.codingblocks.com/amoeba/right-angle-white.svg" alt="Prev">
+      </span>
+
+      {{else}}
+      <span>
+        <a class="grey mr-2">Next</a>
+        <img src="https://minio.codingblocks.com/amoeba/right-angle-grey.svg" alt="Prev">
+      </span>
+      {{/if}}
+    </div>
+  </div>
+  <div class="col-3 border-left">
+    {{!-- <div class="c-clock">
+      <div class="item hrs">01</div>
+      <div class="seprator">:</div>
+      <div class="item mins">45</div>
+      <div class="seprator">:</div>
+      <div class="item secs">54</div>
+    </div> --}}
+    
+    {{review-pad submission=quizAttempt.submission questions=questions onCircleClick=(action 'goToQuestion')}}
+
+    <div class="d-flex justify-content-center">
+      <button class="button-solid button-orange" {{action 'submitQuiz'}}>
+        Submit Quiz
+      </button>
+    </div>
+  </div>
+</div>

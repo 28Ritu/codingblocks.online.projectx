@@ -1,29 +1,40 @@
+import { bool } from '@ember/object/computed';
+import { computed } from '@ember/object';
 import DS from 'ember-data';
-import Ember from 'ember';
 
 export default DS.Model.extend({
   contentable: DS.attr(),
+  title: DS.attr(),
+  sectionContent: DS.attr(),
+  maxScore: DS.attr('number'),
   course: DS.belongsTo('course'),
-  //quiz: DS.belongsTo('quiz'),
+  qna: DS.belongsTo('qna'),
   lecture: DS.belongsTo('lecture'),
   "code-challenge": DS.belongsTo('code-challenge'),
   document: DS.belongsTo('document'),
+  csv: DS.belongsTo('csv'),
   //attachment: DS.belongsTo('attachment'),
   video: DS.belongsTo('video'),
-  payload: Ember.computed('contentable', 'quiz', 'lecture', 'code-challenge', 'document', 'video', function () {
-    return this.get(this.get('contentable'))
+  webinar: DS.belongsTo('webinar'),
+  "course-recommend": DS.belongsTo('course-recommend'),
+  duration: DS.attr(),
+  payload: computed('contentable', 'qna', 'lecture', 'code-challenge', 'document', 'video', 'csv', 'webinar', 'course-recommend', function () {
+    return this.get(this.contentable);
   }),
-  isDone: Ember.computed('progress.isDone', function () {
-    return !! this.get('progress.isDone')
+  isDone: bool('progress.isDone'),
+  isActive: bool('progress.isActive'),
+  isFeedbackDone: computed('progress.isFeedbackDone', function () {
+    return !! this.get('progress.isFeedbackDone')
   }),
-  iconClass: Ember.computed('contentable', function () {
-    switch (this.get('contentable')) {
-      case 'document': return 'file-icon'; break;
-      case 'code-challenge': return 'code-icon'; break;
+  iconClass: computed('contentable', function () {
+    switch (this.contentable) {
+      case 'document': return 'notes-row'; break;
+      case 'code-challenge': return 'code-row'; break;
+      case 'qna': return 'quiz-row'; break;
       case 'lecture':
-      default: return 'play-icon'; break;
+      default: return 'video-row'; break;
     }
   }),
   progress: DS.belongsTo('progress'),
-  section: DS.belongsTo('section')
+  bookmark: DS.belongsTo('bookmark')
 })

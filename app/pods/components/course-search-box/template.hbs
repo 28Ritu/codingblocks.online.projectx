@@ -1,0 +1,31 @@
+<div class="input-search dsp-none-sm bg-black-grey p-3">
+  {{input 
+    type="text" 
+    class="bg-black-grey w-75 grey"
+    placeholder="Search Content"
+    key-press=(perform searchTask) 
+    focusIn=(action 'showResult') 
+    focusOut=(action 'hideResult')
+  }}
+  <img src="https://minio.codingblocks.com/amoeba/search-icon.svg" alt="Search Icon" class="float-right">
+
+  {{#unless hideResultsBox}}
+    <div class="search-box bg-black-grey br-15 inverted">
+      {{#if searchTask.isRunning}}
+        {{loader-component}}
+      {{else}}
+        {{#each results as |result|}}
+          <div class="row search-content pointer align-items-center" {{action 'transitionToContent' result.contentId result.sectionId}}>
+            <div class="img-container col-md-3">
+              <div class="content-row big {{result.iconClass}}"></div>
+            </div>
+            <div class="heading-container col-md-9">
+              <div>{{result.title}}</div>
+              <div class="font-sm">{{result.section}}</div>
+            </div>
+          </div>
+        {{/each}}
+      {{/if}}
+    </div>
+  {{/unless}}
+</div>

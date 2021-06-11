@@ -1,9 +1,11 @@
 import Component from "@ember/component";
 import { later } from "@ember/runloop";
-import { task, timeout } from "ember-concurrency";
-import { action } from "ember-decorators/object";
-import { alias } from "ember-decorators/object/computed";
-import { service } from "ember-decorators/service";
+import { timeout } from "ember-concurrency";
+import { action } from "@ember/object";
+import { alias } from "@ember/object/computed";
+import { inject as service } from '@ember/service';
+import { restartableTask } from 'ember-concurrency-decorators';
+
 
 export default class SearchBoxComponent extends Component {
   tagName = 'span'
@@ -12,21 +14,28 @@ export default class SearchBoxComponent extends Component {
 
   @service api
   @service router
+  @service currentUser
 
   @alias('searchTask.lastSuccessful.value') results
+  @alias('currentUser.organization') organization
 
-  searchTask = task(function * () {
+  @restartableTask searchTask = function* ()  {
     yield timeout (1000)
     const searchQuery = this.get('qs')
+    const extraWhere = {}
+    if (this.organization) {
+      extraWhere.organization = this.organization
+    }
     return this.get('api').request('courses/search', {
       data: {
-        searchQuery
+        searchQuery,
+        ...extraWhere
       }
     }).then(response => {
       this.set('hideResultsBox', false)
       return response
     })
-  }).restartable()
+  }
 
   @action
   transitonToResult (course) {

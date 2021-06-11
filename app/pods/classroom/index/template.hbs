@@ -1,78 +1,47 @@
-{{otp-enroll}}
-<div class="container-courses">
-    <div class="heading">
-        <p>My Courses</p>
-    </div>
-    <div class="row">
-        {{#each runs as |run index|}}
-            <div class="card-layout col-md-4 col-sm-6">
-                <div class="card o-layout-card ">
+<h2> 
+  My Courses 
+</h2>
 
-                  <div data-completed="false" class="status-circle offset-md-8 col-md-4">
-                    <div class="circle-back">
-                      <div class="circle-front">
-                        <p class="progress-text">{{percentage run.course
-                                                              .completedContents run.course.totalContents}}%</p>
-                      </div>
-                    </div>
-                  </div>
+<WTabNav 
+  @tabs={{tabs}}
+  @activeTab={{activeTab}}
+  @onTabChange={{action "changeTab"}}
+  >
+  <WAsync 
+    @task={{activeTab.task}}
+    @autoFire={{true}} 
+    @loaderComponent={{component 'my-courses-list/placeholder-row'}}
+    as |result|>
+    {{#if result.length}}
+      <div class="border-bottom-list">
+        {{#if (eq activeTab.name 'Wishlisted')}}
+          {{component activeTab.component wishlist=result}}
+        {{else}}
+          {{component activeTab.component runs=result}}
+        {{/if}}
+      </div>
+    {{else}}
+      <div class="t-align-c my-5">
+        <img src="/app/images/camera-orange.svg" alt="Courses">
+        <h4 class="bold mt-4">My Courses</h4>
+        <div class="grey mb-4">You are not enrolled in any course! Find courses to get enrolled!</div>
+        <a href="/courses" class="font-sm bold gradient-text-orange">Explore Courses</a>
+      </div>
+    {{/if}}
+  </WAsync>
+</WTabNav>
 
-                    <div class="card-image o-image-card">
-                        <img src="{{defaultTo run.course.logo '/images/c++'}}">
-                    </div>
 
-                    <div class="card-heading o-text-card">
-                        {{run.course.title}}
-                    </div>
-                    <div class="card-text">
-                        {{run.course.subtitle}}
-                    </div>
-                    <div class="card-mentor">                    
-                        <div class="card-mentor-image">
-                            {{#each run.course.instructors as |instructor index|}}
-                                {{#if (lt index 2) }}
-                                    <img class="card-mentors" src="{{instructor.photo}}">
-                                {{/if}}
-                            {{/each}}
-                        </div>
-                        <div class="card-mentor-text">
-                            <span>Instructors</span>
-                            <div class="card-mentor-name">
-                                {{#each run.course.instructors as |instructor index|}}
-                                    {{#if (lt index 2)}}
-                                        {{instructor.name}}{{if (and (gt run.course.instructors.length 1) (eq index 0)) "," ""}}
-                                    {{/if}}
-                                {{/each}}
-                                
-                                {{#if (gt run.course.instructors.length 2)}}
-                                    <span class="price"> +{{sub course.instructors.length 2}}</span> more
-                                {{/if}}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-mentor-divider"></div>
-                    <div class="price-detail row">
-                        <div class="col-md-6 col-sm-12 col-xs-12">
-                            <div class="card-price-details">
-                                <div class="card-batches">
-                                   {{run.name}}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="button-parent col-md-6 col-sm-12 col-xs-12">
+<WPagination
+  @pages={{pagination.totalPages}}
+  @count={{pagination.count}}
+  @size={{limit}}
+  @current={{pagination.currentPage}}
+  @onchange={{action "paginate"}}
+/>
 
-                            <div class="button-solid">
-                                {{#link-to "classroom.timeline" run.course.id run.id tagName="button" activeClass=""}}
-                                    Resume
-                                {{/link-to}}
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        {{/each}}
-    </div>
-</div>
-
-{{recommended-courses}}
+{{#if layout.outsideContainer}}
+  {{#in-element layout.outsideContainer}}
+    <OtpEnroll />
+  {{/in-element}}
+{{/if}}

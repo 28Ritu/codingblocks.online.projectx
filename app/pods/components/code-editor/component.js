@@ -1,51 +1,63 @@
-import Component from "@ember/component";
-import { action, computed } from "ember-decorators/object";
+import Component from "@ember/component"
+import { action, computed } from "@ember/object"
+import { alias }  from '@ember/object/computed';
+import { set } from '@ember/object'
+import { restartableTask } from 'ember-concurrency-decorators'
+import { inject as service } from '@ember/service';
 
 export default class EditorClass extends Component {
   classNames = ["height-100"];
-
   isLanguageSelectOpen = false;
   allLanguages = [
     {
       name: "C++",
       code: "cpp",
-      mode: "ace/mode/c_cpp",
+      mode: "cpp",
       source: ""
     },
     {
       name: "C",
       code: "c",
-      mode: "ace/mode/c_cpp",
+      mode: "c",
       source: ""
     },
     {
       name: "Python 2.7",
       code: "py2",
-      mode: "ace/mode/python",
+      mode: "python",
+      source: ""
+    },
+    {
+      name: "Python 3",
+      code: "py3",
+      mode: "python",
       source: ""
     },
     {
       name: "Node",
       code: "js",
-      mode: "ace/mode/javascript",
+      mode: "javascript",
       source: ""
     },
     {
       name: "Java 8",
       code: "java",
-      mode: "ace/mode/java",
+      mode: "java",
       source: ""
     },
     {
       name: "C#",
       code: "csharp",
-      mode: "ace/mode/csharp",
+      mode: "csharp",
       source: ""
     }
   ];
 
   customInput = "";
   isRunOutput = true;
+
+  @service firepad
+  @alias('firepad.connected') isCollaborating
 
   didReceiveAttrs() {
     this._super(...arguments);
@@ -60,14 +72,14 @@ export default class EditorClass extends Component {
 
     allLanguages.forEach(lang => {
       if (!lang.aliases) {
-        lang.aliases = [];
+        set(lang, 'aliases', [])
       }
       const stub = stubs.find(stub => {
         return (
           stub.language === lang.code || lang.aliases.includes(stub.language)
         );
       });
-      if (stub && stub.body) lang.source = stub.body;
+      if (stub && stub.body) set(lang, 'source', stub.body)
     });
   }
 
@@ -87,6 +99,10 @@ export default class EditorClass extends Component {
   selectLanguage(lang) {
     this.set("isLanguageSelectOpen", false);
     this.set("selectedLanguage", lang);
+
+    if(this.get("previousSourceCode")) {
+      this.set("selectedLanguage.source", this.get("previousSourceCode"))
+    }
   }
 
   @action
@@ -114,4 +130,62 @@ export default class EditorClass extends Component {
     this.get("submitCodeTask").perform(config);
     this.set("isRunOutput", false);
   }
+
+  @action 
+  toggle(modalContentType){
+    this.sendAction('toggleModal', modalContentType);
+  }
+
+  @action
+  onEditorReady (editor) {
+    const monacoIframe = document.querySelector('iframe[src*="ember-monaco"]')
+    
+    // Get the editor reference and set monaco global
+    
+    this.set('editor', editor)
+    window.monaco = monacoIframe.contentWindow.monaco
+
+    const firepad = this.firepad
+    firepad.set("editor", this.editor)
+
+    // if we have a ref; connect to firebase
+    if (this.ref) {
+      firepad.connect(this.ref, false)
+    } else {
+      firepad.disconnect()
+    }
+  }
+
+  @restartableTask setCollabModeTask = function *(value) {
+    if (value) {
+      yield this.firepad.connect()
+    } else {
+      this.firepad.disconnect()
+    }
+  }
+
+  didInsertElement () {
+    this._super(...arguments)
+    const monacoIframe = document.querySelector('iframe[src*="ember-monaco"]')
+    monacoIframe.addEventListener('load', () => {
+      const iframeWindow = monacoIframe.contentWindow
+      
+      // Get the editor reference and set monaco global
+      this.editor = iframeWindow.editor
+      window.monaco = iframeWindow.monaco
+
+      const firepad = this.firepad
+      firepad.set("editor", this.editor)
+
+      // if we have a ref; connect to firebase
+      if (this.ref) {
+        firepad.connect(this.ref, false)
+      } else {
+        firepad.disconnect()
+      }
+    })
+  }
+
+
+  
 }

@@ -1,25 +1,27 @@
-import Route from '@ember/routing/route';
-import { hash } from 'rsvp';
+import Route from "@ember/routing/route";
+import { inject as service } from '@ember/service';
 
 export default Route.extend({
-    model () {
-        return hash({
-            runAttempt: this.modelFor('attempt'),
-            content: this.modelFor('attempt.content'),
-            payload: this.modelFor('attempt.content').get('payload')
-        })
-    },
-    setupController(controller, model) {
-        controller.set("runAttempt", model.runAttempt)
-        controller.set("content", model.content)
-        controller.set("payload", model.payload)
-    },
-    renderTemplate(controller, model) {
-        this.render()
-        this.render("attempt.content.index.heading", {
-            outlet: "heading",
-            controller: this.controllerFor("attempt.content.index"),
-            into: "attempt"
-        })
+  router: service(),
+  model() {
+    const content = this.modelFor('attempt.content')
+    switch (content.contentable) {
+      case 'code-challenge': 
+        return this.transitionTo('attempt.content.code-challenge')
+      case 'csv': 
+        return this.transitionTo('attempt.content.csv')
+      case 'document': 
+        return this.transitionTo('attempt.content.document')
+      case 'lecture': 
+        return this.transitionTo('attempt.content.lecture')
+      case 'video': 
+        return this.transitionTo('attempt.content.video')
+      case 'qna':
+        return this.transitionTo('attempt.content.quiz', content.get('payload.qId'))
+      case 'webinar':
+        return this.transitionTo('attempt.content.webinar')
+      case 'course-recommend':
+        return this.transitionTo('attempt.content.course-recommend')
     }
+  }
 });

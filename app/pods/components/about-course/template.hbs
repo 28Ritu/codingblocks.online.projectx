@@ -1,335 +1,293 @@
-{{!-- {{course.title}}
-<div class="card-layout col-md-4">
-    <div class="card o-layout-card ">
-        <div class="card-image o-image-card">
-            <img src="images/c++">
-        </div>
-        <div class="card-heading o-text-card">
-            Registration Open for Launchpad online
-        </div>
-        <div class="card-text">
-            Learn data structures & algorithm in C++
-        </div>
-        <div class="button-solid">
-            <button>Register</button>
-        </div>
-    </div>
-</div> --}}
-
-<div class="o-buy-top slide-up row no-gutters justify-content-between">
-  <div class="col-6 align-self-center">
-    <div class="row no-gutters">
-      <div class="o-image-card col-sm-2">
-        <img src="{{course.logo}}" alt="course image">
-      </div>
-      <div class="heading-d col-10 align-self-center">
-        <div class="main-h">
-          {{course.title}}
-        </div>
-        <div class="sub-h">
-          Mentor :
-          {{#each course.instructors as |instructor index|}}
-             {{instructor.name}}{{if (lt index (sub course.instructors.length 1)) ", " " "}}
-          {{/each}} 
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 align-self-center">
-    <div class="row justify-content-end">
-      <div class="button-dashed col-6">
-        {{#link-to 'classroom' tagName="button"}}
-          ENROLL VIA OTP
-        {{/link-to}}
-      </div>
-      <div class="button-solid col-6">
-        <button>BUY NOW</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 {{!-- Summary Section --}}
-<div class="o-summary">
-  <div class="classroom-container row">
-    <div class="classroom-header-box col-md-7 col-sm-12 col-xs-12">
-      <div class="classroom-header row">
-        <div class="classroom-image col-md-2 col-xs-2 col-sm-2">
-          <img src="{{course.logo}}" alt="course logo">
+<div class="container mt-5">
+  <div class="c-summary row mb-5">
+    <div class="col-12 col-md-7 pr-md-5">
+      <div class="img-desc no-gutters mb-3">
+        <div class="col-3 col-sm-2 pr-4">
+          <img class="round" src={{course.logo}} alt="course logo">
         </div>
-        <div class="classroom-text col-md-10 col-xs-10 col-sm-10">
-          {{course.title}}
-        </div>
-      </div>
-
-      <p class="classroom-para">
-        {{course.subtitle}}
-      </p>
-
-      {{rating-stars-static course=course}}
-
-      <div class="para">
-        <span class="key">Mentor : </span> 
-        {{#each course.instructors as |instructor index|}}
-             {{instructor.name}}{{if (lt index (sub course.instructors.length 1)) ", " " "}}
-          {{/each}} 
-      </div>
-
-      {{!-- <div class="button-solid">
-        <button>BUY NOW TO ENROLL</button>
-      </div> --}}
-
-      <div class="heading-u">
-        Summary
-      </div>
-
-      <div class="para">
-        {{course.summary}}
-      </div>
-    </div>
-  </div>
-</div>
-
-{{!-- Buy right --}}
-
-<div class="o-buy-right">
-  <div class="card">
-    <div class="card-video">
-      <div class="preview">
-        <iframe src="{{course.promoVideo}}" controls allowfullscreen></iframe>
-      </div>
-
-    </div>
-    <div class="button-container row justify-content-center">
-      <div class="button-solid col-6">
-        <button>BUY NOW</button>
-      </div>
-
-      <div class="button-dashed col-6">
-        {{#link-to 'classroom' tagName="button"}}
-          ENROLL VIA OTP
-        {{/link-to}}
-      </div>
-    </div>
-
-    <div class="course-features">
-      <div class="row justify-content-center">
-        <div class="col-2 align-self-center">
-          <div class="img-container">
-            <div class="round-img">
-              <img src="/images/content-2.png" alt="">
+        <div class="description col-9 col-sm-7 pl-3">
+          <div>
+            <h1 class="mb-2 font-xl">{{course.title}}</h1>
+            <div class="grey font-mds mb-2">
+              {{course.subtitle}}
+            </div>
+            <div class="font-mds bold mb-3">
+              Taught By: {{#each course.instructors as |instructor index|}}
+              <span class="grey">{{instructor.name}}{{if (lt index (sub course.instructors.length 1)) ", " " "}}</span>
+              {{/each}}
             </div>
           </div>
-
-        </div>
-        <div class="para col-4 align-self-center">
-          100+ lecture Video Content
         </div>
 
-        <div class="col-2 align-self-center">
-          <div class="img-container">
-            <div class="round-img">
-              <img src="/images/revise-2.png" alt="">
-            </div>
-          </div>
-
-        </div>
-        <div class="para col-4 align-self-center">
-          Re-visit and Revise topics
-        </div>
       </div>
 
-      <div class="row justify-content-center">
-        <div class="col-2 align-self-center">
-          <div class="img-container">
-            <div class="round-img">
-              <img src="/images/certificate-2.png" alt="">
-            </div>
-          </div>
+      <div class="mb-5">
+      {{#unless course.organization}}
+        <div class="d-flex badge">
+          <h3 class="white col-10 col-sm-8">
+            Get Certified & Win Goodies.
+            <br>
+            <span class="red">with this course</span>
+          </h3>
+          <img src="/images/stamp.png" alt="Coding Blocks Pvt Ltd">
+        </div>
+      {{/unless}}
+      {{#if course.language}}
+        <h3 class="mt-5">Language</h3>
+        <div class="font-mds grey">All course contents will be in <span class="black">{{course.language}}</span></div>
+      {{/if}}
+        
+        <h3 class="mb-3 mt-5">
+          Summary
+        </h3>
+        <div class="para summary grey">
+          {{markdown-to-html course.summary}}
+        </div>
 
-        </div>
-        <div class="para col-4 align-self-center">
-          Certification of Completion
-        </div>
+        {{#if course.topRun.tags}}
+        <p class="mt-5">
+          Major Topics Covered
+        </p>
 
-        <div class="col-2 align-self-center">
-          <div class="img-container">
-            <div class="round-img">
-              <img src="/images/support-2.png" alt="">
-            </div>
-          </div>
-
+        <div>
+          {{#each course.topRun.tags as |tag|}}
+            <span class="pill m-1">{{tag.name}}</span>
+          {{/each}}
         </div>
-        <div class="para col-4 align-self-center">
-          24x7 mentor support
-        </div>
+        {{/if}}
       </div>
 
+      {{#unless getRatingStats.isRunning}}
+      <h3 class="mb-4">Student Feedback</h3>
 
-    </div>
 
-  </div>
-</div>
+      <div class="row c-rating-stats no-gutters">
+        <div class="col-4 score">
+          <span class="font-lg bold">{{course.rating}}
+          <br class="d-sm-none">
+          </span><span class="bold font-md">out of 5</span>
 
-{{!-- Accordian --}}
+          {{rating-stars-static rating=course.rating}}
 
-<div class="o-about-accordian">
-  <div class="custom-heading accordian-head">
-    <div class="heading-u">
-      What will you learn
-    </div>
-
-    <div class="flex-row">
-      <div class="lecture-count">
-        {{course.totalContents}} Lectures
+          <div class="font-md extra-bold">
+            {{course.reviewCount}} Ratings
+          </div>
+        </div>
+        <div class="col-8 stats">
+          {{#each (range 5 0) as |index|}}
+          <div class="row">
+            <div class="col-12 col-sm-7">
+              <progress value={{get stats (sub index 1)}} max={{course.reviewCount}}></progress>
+            </div>
+            <div class="col-5 rating">
+              {{#each (range 0 index)}}
+              <span class="pos-rating">
+                <i class="fas fa-star"></i>
+              </span>
+              {{/each}}
+            </div>
+          </div>
+          {{/each}}
+        </div>
       </div>
-      {{!-- <div class="duration">
-        54 Hours
-      </div> --}}
+      {{/unless}}
     </div>
-  </div>
 
-  <div class="o-accordian">
-    {{#each course.sortedSections as |section|}}
-      <div class="accordian-ul" data-show="true">
-        {{#accordian-head title=section.name total=section.totalContents}}
+    <div class="col-12 col-md-5 pr-md-0">
+      {{!-- Buy right --}}
+      <div class="c-buy-right">
+        <div class="border-card">
+          <div class="card-video">
+            <iframe class="video" src={{course.promoVideo}} controls allowfullscreen></iframe>
+          </div>
+          <div class="button-container row justify-content-center">
+            <div class="col-5">
+              <a href="#runs" {{action 'log' 'Buy Now' course.title preventDefault=false}}>
+                <button class="button-solid white">{{if course.organization "Request Access" "Buy Now"}}</button>
+              </a>
+            </div>
 
-        {{#each section.contents as |content|}}
-          <div class="accordian-li">
-            <div class="li-left flex-row">
-              <div class="accordian-li-type"></div>
-              <div class="accordian-li-heading">
-                {{content.payload.name}}
+            {{#unless course.organization}}
+            <div class="col-5 p-0">
+              {{#if session.isAuthenticated}}
+              {{#link-to "classroom.timeline.index" course.id course.topRun.id class="button-dashed" tagName="button" invokeAction=(action 'log' 'Free trial' course.title)}}
+              Start Free Trial
+              {{/link-to}}
+              {{else}}
+              <button class="button-dashed" onclick={{action "logIn"}}>
+                Start Free Trial
+              </button>
+              {{/if}}
+            </div>
+            {{/unless}}
+          </div>
+
+          <div class="course-features">
+            {{#if course.coursefeatures}}
+            <div class="row justify-content-center">
+              {{#each course.coursefeatures as |feature|}}
+
+              <div class="col-6 d-flex align-items-center mb-5">
+                <div class="col-5 pl-0">
+                  <img src="{{feature.icon}}" alt="">
+                </div>
+                <div class="col-7 align-self-center font-sm pr-0">
+                  {{feature.text}}
+                </div>
+              </div>
+              {{/each}}
+            </div>
+            {{/if}}
+          </div>
+          {{#if showGoodiesInfo}}
+            <div class="footer">
+              <img class="floating-img" src="/images/free.png" alt="Free" loading="lazy">
+              <div class="row red">
+                <div class="col-8">
+                  Get lots of goodies with this course!
+                </div>
+                <div class="col-4">
+                  <img src="/images/wildcraft.png" alt="Wildcraft" loading="lazy">
+                </div>
               </div>
             </div>
+          {{/if}}
 
-            <div class="flex-row">
-            </div>
-          </div>
-        {{/each}}
-
-        {{/accordian-head}}
+        </div>
       </div>
-    {{/each}}
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-12 {{if course.projects 'col-md-9'}}">
+      <h3 class="mb-5">What will you learn?</h3>
+      {{!-- Accordion --}}
+      <div class="border-card accordion-card mb-5">
+        <div class="c-accordion c-about-accordion">
+          <div class="list-divided border-none">
+            {{#each course.topRun.sections as |section|}}
+            {{#accordion-head title=section.name total=section.totalContents duration=section.duration type="info" listType="divided" premium=section.premium}}
+            <div class="pb-4 pt-4">
+              {{#each section.contents as |content|}}
+              <div class="row no-gutters {{if (not section.premium) "red" "grey"}}">
+                <div class="li-left col-10 col-sm-8">
+                  <div class="col-1 {{content.iconClass}}-red content-icon"></div>
+                  <div class="col-11 col-sm-8">
+                    {{content.title}}
+                  </div>
+                </div>
+                <div class="li-right no-gutters col-2 col-sm-4">
+                  {{#if section.premium}}
+                  <div class="t-align-c">
+                    <i class="fas fa-lock"></i>
+                  </div>
+                  {{else}}
+                  <div class="col-12 col-sm-6">
+                    {{#link-to "classroom.timeline" course.id course.topRun.id tagName="button" class="t-align-r" invokeAction=(action 'log' 'Preview' course.title preventDefault=false)}}
+                    Preview
+                    {{/link-to}}
+                  </div>
+                  {{/if}}
+                  <div class="grey col-6 dsp-none-xs">
+                    {{format-duration content.duration}}
+                  </div>
+                </div>
+              </div>
+              {{/each}}
+            </div>
+
+            {{/accordion-head}}
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    </div>
+    {{!-- Projects --}}
+    {{#if course.projects}}
+      <div class="col-12 col-md-3">
+        <h3 class="mb-5">Projects</h3>
+        <div class="row">
+          {{#each course.projects as |project index|}}
+            <div class="col-12 mb-4">
+              <div class="img-card">
+                <div class="head">
+                  <img class="back-img" src={{project.image}} loading="lazy">
+                  <div class="content white">
+                    <h4>Project {{inc index 1}}</h4>
+                  </div>
+                </div>
+                <div class="foot">
+                  <h4>{{project.title}}</h4>
+                  <div class="card-md">
+                    {{project.description}}
+                  </div>
+                </div>
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
   </div>
 </div>
 
 {{!-- Instructor --}}
 
-<div class="o-instructor">
-  <div class="heading-u">
-    About Instructors
-  </div>
+<div class="border-card c-about-instructors mb-5">
+  <div class="container">
+    <h3 class="mb-5">
+      About Instructors
+    </h3>
 
-  <div class="o-about-instructors container-fluid">
-    <div class="row">
+
+    <div class="row no-gutters">
       {{#each course.instructors as |instructor|}}
-        <div class="col-md-6 col-sm-12">
-          <div class="img-desc row">
-            <div class="col-4">
-              <div class="img-container">
-                <div class="round-img">
-                  <img src="{{instructor.photo}}" alt="photo of {{instructor.name}}">
-                </div>
+      <div class="col-12 col-md-6 mb-5">
+        <div class="img-desc row no-gutters">
+          <div class="col-3 pr-4">
+            <img class="round" src={{instructor.photo}} alt="photo of {{instructor.name}}" loading="lazy">
+          </div>
+          <div class="description col-8">
+            <div class="heading-d">
+              <h4 class="bold">
+                {{instructor.name}}
+              </h4>
+              <div class="red font-sm mb-3">
+                Mentor, Coding Blocks
+                <br>
+                <a href="mailto:{{instructor.email}}">{{instructor.email}}</a>
               </div>
-
-            </div>
-
-
-            <div class="description col-8">
-              <div class="heading-d">
-                <div class="main-h">
-                  {{instructor.name}}
-                </div>
-                <div class="sub-h">
-                  Mentor, Coding Blocks
-                </div>
-              </div>
-
               <div class="classroom-para">
-                {{instructor.description}}
+                {{markdown-to-html instructor.description}}
               </div>
             </div>
           </div>
         </div>
+      </div>
       {{/each}}
-      
+
     </div>
   </div>
 </div>
 
 {{!-- Available Batches --}}
+<div class="bg-light-grey pb-5 pt-5 mb-5" id="runs">
+  <div class="container">
+    <h3 class="t-align-c">
+      Choose Batches
+    </h3>
 
-<div class="o-batches">
-<div class="heading-u">
-  Choose from Available Batches
+    {{#if showCartModal}}
+    {{cart-dialog dukaanCart=dukaanCart run=runToBuy onClose=(action (mut showCartModal) false)}}
+    {{/if}}
+
+    <div class="row justify-content-center m-0">
+      {{#each availableRuns as |run|}}
+      {{available-run-card run=run logInAndStartTrial=(action "logInAndStartTrial") enrollNowTask=enrollNowTask}}
+      {{else}}
+      No available runs right now ! Please check back later or drop a line at admissions.codingblocks.com.
+      {{/each}}
+    </div>
+  </div>
 </div>
-
-<div class="grid row">
-    {{#each availableRuns as |run|}}
-	<div class="card-layout col-md-4 col-sm-6">
-		<div class="card my-course o-layout-card ">
-			<div class="card-heading o-text-card">
-				{{moment-format (unix run.end) 'MMM YY'}}
-			</div>
-			<div class="row">
-				<div class="batch">
-					<div class="card-text grey">
-						Batch Starts
-					</div>
-					<div class="card-text">
-						{{moment-format (unix run.start) 'MMM Do YYYY'}}
-					</div>
-				</div>
-
-				<div class="divider-v"></div>
-
-				<div class="batch">
-					<div class="card-text grey">
-						Batch Ends
-					</div>
-					<div class="card-text">
-						{{moment-format (unix run.end) 'MMM Do YYYY'}}
-					</div>
-				</div>
-			</div>
-
-			<div class="price">
-				Rs {{run.price}}
-			</div>
-
-			<div class="my-course-enroll row no-gutters">
-				<div class="col-8 align-self-end">
-					<div>HURRY UP!</div>
-					<div class="red">Enrollment ends {{moment-format (unix course.enrollmentEnd) 'MMM Do YYYY'}} </div>
-				</div>
-
-				<div class="button-parent col-4">
-					<div class="button-solid">
-						<button>Enroll Now</button>
-					</div>
-				</div>
-
-			</div>
-
-			<div class="card-mentor-divider"></div>
-
-			<div class="row no-gutters">
-				<div class="col-8 align-self-center">
-					You may also try our
-					free lectures:
-				</div>
-				<div class="button-parent col-4">
-					<div class="button-dashed">
-            {{#link-to "classroom.timeline.index" course.id run.id tagName="button" activeClass=""}}
-						  Start Free Trial
-            {{/link-to}}
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-    {{/each}}
-</div>
-</div>
-

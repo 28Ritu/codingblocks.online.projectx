@@ -1,0 +1,19 @@
+{{#each @wishlist as |row|}}
+<MyCoursesList::CourseRow @course={{row.course}}>
+  <div class="col-lg-4 col-md-6 pl-md-3 mt-md-0 mt-4">
+    <div class="mb-2">User Rating</div>
+    <RatingStarsStatic @rating={{row.course.rating}} @tagName="span" />
+    {{row.course.rating}}, {{row.course.reviewCount}} ratings
+  </div>
+  <div class="col-lg-4 col-12 mt-lg-0 mt-4 pl-lg-3">
+    <div class="row no-gutters justify-content-around align-items-center">
+      <button class="button-dashed button-orange mr-3">
+        Start Free Trial
+      </button>
+      <a href="/courses/" class="button-solid button-orange">
+        Buy now
+      </a>
+    </div>
+  </div>
+</MyCoursesList::CourseRow>
+{{/each}}

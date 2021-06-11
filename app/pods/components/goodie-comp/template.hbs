@@ -1,0 +1,136 @@
+<div class="border-card bg-gradient-purple mb-5">
+  <div class="d-flex align-items-center">
+    <i class="fas fa-gift fa-2x gradient-text-orange mr-2 s-30x30"></i>
+    <div class="bold gradient-text-orange font-md">Claim Goodies</div>
+  </div>
+  <div class="font-normal white my-4">
+    Complete {{ run.goodiesThreshold }}% of your course
+    to unlock and claim goodies
+  </div>
+  <div class="divider-h bg-white"></div>
+  <div class="row no-gutters align-items-center my-4 py-3">
+    <div class="s-30x30 bg-white br-25 mr-2 all-center">
+      {{#if thresholdCompleted}}
+        <FaIcon @icon="check" />
+      {{/if}}
+    </div>
+    <div class="bold white word-wrap flex-1">Threshold Completion: {{ run.goodiesThreshold }}%+</div>
+  </div>
+  {{#if alreadyClaimed}}
+    <button class="button-solid button-orange" disabled> Requested </button>
+  {{else if completed}}
+    <button class="button-solid button-orange" disabled> Delivered </button>
+  {{else if canClaim}}
+    <button class="button-solid button-orange" {{action 'toggleModal'}}> Request </button>
+  {{else}}
+    <button class="button-solid button-orange white" disabled>
+      <i class="fas fa-lock"></i>
+      Request
+    </button>
+  {{/if}}
+</div>
+
+{{#if showModal}}
+  <ModalDialog   
+    @onClose={{action "toggleModal"}} @translucentOverlay={{true}}
+    @targetAttachment="none"
+    @wrapperClass="centered-scrolling-wrapper"
+    @overlayClass="centered-scrolling-overlay" 
+    @containerClass="col-md-6 col-12 centered-scrolling-container">
+    <div class="my-3 font-mds">
+      <h3 class="col-12">Goodies Request Form</h3>
+      <form method="" {{action "saveForm" on="submit"}}>
+        <div class="col-12 my-4">
+          <label class="my-1 form-field--label ember-view"> Name
+            <span class="star">*</span>
+          </label>
+          {{input aria-invalid="false" class="input-text form-field--control ember-view" type="text" required=true value=name}}
+        </div>
+        {{!-- <div class="col-12 my-4">
+          <fieldset class="radio-group form-field ember-view">  
+            <legend class="ember-view">  Enter T-shirt size 
+              <span class="star">*</span>
+            </legend>
+            <ul>
+              <li class="ember-view">
+                <div class="radio-field form-field ember-view">
+                  <label class="form-field--label ember-view">      
+                    {{input aria-invalid="false" class="form-field--control ember-view" type="radio" name="tshirt" value="XL" required=true click=(action (mut tshirt) 'XL')}}
+                    XL
+                  </label> 
+                </div>
+              </li>
+              <li class="ember-view">
+                <div class="radio-field form-field ember-view">
+                  <label class="form-field--label ember-view">      
+                    {{input aria-invalid="false" class="form-field--control ember-view" type="radio" name="tshirt" value="L" click=(action (mut tshirt) 'L')}}
+                    L
+                  </label> 
+                </div>
+              </li>
+              <li class="ember-view">
+                <div class="radio-field form-field ember-view">
+                  <label class="form-field--label ember-view">      
+                    {{input aria-invalid="false" class="form-field--control ember-view" type="radio" name="tshirt" value="M" click=(action (mut tshirt) 'M')}}
+                    M
+                  </label> 
+                </div>
+              </li>
+              <li class="ember-view">
+                <div class="radio-field form-field ember-view">
+                  <label class="form-field--label ember-view">      
+                    {{input aria-invalid="false" class="form-field--control ember-view" type="radio" name="tshirt" value="S" click=(action (mut tshirt) 'S')}}
+                    S
+                  </label> 
+                </div>
+              </li>
+            </ul>
+          </fieldset>
+        </div> --}}
+        <div class="col-12 my-4">
+          <label class="my-1 form-field--label ember-view"> Address
+            <span class="star">*</span>
+          </label>
+          {{textarea aria-invalid="false" class="input-textarea form-field--control ember-view" rows="4" required=true value=address}}
+        </div>
+        <div class="col-12 my-4">
+          <label class="my-1 form-field--label ember-view"> 
+            Postal Code
+            <span class="star">*</span>
+          </label>
+          {{input aria-invalid="false" class="input-text form-field--control ember-view" pattern="\d*" maxlength="6" type="text" required=true value=postalCode}}
+        </div>
+        <div class="col-12 my-4">
+          <label class="my-1 form-field--label ember-view"> 
+            Alternate Contact Number
+          </label>
+          {{input aria-invalid="false" class="input-text form-field--control ember-view" pattern="\d*" maxlength="10"  type="text" required=false value=mobile}}
+        </div>
+        <div class="col-12 my-4">
+
+          Please Note:
+          <ol>
+            <li>Provide correct postal address where there will be someone to collect</li>
+            <li>We will send bags only in India</li>
+            <li>In case, bag is returned back to us then you have to collect the same from our center</li>
+            <li>We will send the goodies within next 10 days and will share the tracking ids as soon it is in transit.</li>
+          </ol>
+
+          <input class="ember-checkbox ember-view" type="checkbox" required=true>  
+          <b>I understand and acknowledge all the information given is correct.</b>
+        </div>
+        <div class="col-12 my-2">
+        {{#if isDisabled}}
+          <button class="async-button disabled button-solid button-orange form-button--submit ember-view" type="submit">
+            Request
+          </button>
+        {{else}}
+          <button class="async-button button-solid button-orange form-button--submit ember-view" type="submit">
+            Request
+          </button>
+        {{/if}}
+      </div>
+      </form>
+    </div>
+  </ModalDialog>
+{{/if}}

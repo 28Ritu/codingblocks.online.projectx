@@ -8,12 +8,12 @@ export default AjaxService.extend({
     currentUser: service(),
     host: env.hackApiHost,
     contentType: 'application/json; charset=utf-8',
-    namespace: '/api',
+    namespace: '/api/v2',
     headers: computed('currentUser.user.hackJwt', function () {
-      console.log(this.get('currentUser.user.hackJwt'))
         return {
             Authorization: `JWT ${this.get('currentUser.user.hackJwt')}`,
-            'user-id': JSON.parse(window.atob(this.get('currentUser.user.hackJwt').split('.')[1])).user.id
+            'user-id': JSON.parse(window.atob((this.get('currentUser.user.hackJwt').split('.')[1]).replace (/-/g, '+').replace(/_/g, '/'))).id,
+            'client': 'online-cb'
         }
     })
 });

@@ -1,0 +1,32 @@
+<Player::PlayerTabs::DoubtSupportStrip 
+  @runAttempt={{runAttempt}}
+  @onAskDoubt={{action 'openAskDoubtModal'}}
+/>
+<WTabNav
+  class="c-player"
+  @tabClass="inverted"
+  @inactiveClass="white"
+  @tabs={{tabs}}
+  @activeTab={{activeTab}}
+  @onTabChange={{action (mut activeTab)}}>
+  {{#if (eq activeTab.name 'Doubts')}}
+    <WAsync @task={{activeTab.task}} @autoFire="true" as |doubts|>
+      {{component activeTab.component
+        doubts=doubts}}  
+    </WAsync>
+  {{else if (eq activeTab.name 'Notes')}}
+    <WAsync @task={{activeTab.task}} @autoFire="true" as |notes|>
+      {{component activeTab.component
+        onAfterSave=(action (perform activeTab.task))
+        notes=notes}}  
+    </WAsync>
+  {{/if}}
+</WTabNav>
+
+{{#if showAskDoubtModal}}
+  <Player::PlayerAskDoubtModal 
+    @onClose={{action "closeAskDoubtModal"}}
+    @onAfterSave={{action (perform fetchDoubtsTask)}}
+    @doubt={{newDoubt}} 
+    class="row white h-100" />
+{{/if}}

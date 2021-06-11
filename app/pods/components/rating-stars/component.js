@@ -1,67 +1,94 @@
 import Component from '@ember/component'
-import { action, computed } from 'ember-decorators/object'
-import { alias } from 'ember-decorators/object/computed'
-import { service } from 'ember-decorators/service'
+import { action, computed } from '@ember/object'
+import { alias } from '@ember/object/computed'
+import { inject as service } from '@ember/service';
 
-/* props 
+/* props
     course: {
         type: course
     }
 */
 export default class RatingStartComponent extends Component {
-    @service api
+  @service api
 
-    scale = 5
-    ratingMarkedByUser = null
+  tagName = 'span'
+  classNames = ['align-items-center']
 
-    constructor () {
-        super(...arguments)
-        this.set('hasUserMarkedRating', false);
+  scale = 5
+  ratingMarkedByUser = null
+  isEditing = false
+
+  constructor () {
+    super(...arguments)
+    this.set('hasUserMarkedRating', false)
+  }
+
+  didReceiveAttrs () {
+    this._super(...arguments)
+    if (this.get('initialRating')) {
+      this.set('hasUserMarkedRating', true)
+      this.set('ratingMarkedByUser', this.get('initialRating.value'))
+      this.set('rating', this.get('initialRating.value'))
+      this.set('textExperience', this.get('initialRating.heading'))
+      this.set('textPublic', this.get('initialRating.review'))
     }
+  }
 
-    didReceiveAttrs () {
-        this._super(...arguments)
-        this.get('api').request('/courses/'+ this.get('course.id') + '/rating').then(response => {
-            this.set('initialRating', response.rating)
-            this.set('rating', this.get('initialRating'))
-            if (response.userScore) {
-                //user has already voted
-                this.set('hasUserMarkedRating', true)
-                this.set('ratingMarkedByUser', response.userScore.value)
-            }
-        })
+  @action
+  changeRating (val) {
+    this.set('rating', val)
+    this.set('initialRating.value', val)
+  }
+
+  @action
+  resetRating () {
+    this.set('rating', this.get('ratingMarkedByUser'))
+  }
+
+  @action
+  markRating (rating) {
+    this.set('hasUserMarkedRating', true)
+    this.set('isEditing', false)
+    this.set('ratingMarkedByUser', rating)
+  }
+
+  @action
+  toggleEditingMode () {
+    // this.set('rating', 0)
+    this.toggleProperty('isEditing')
+    if (this.get('showModal') == true) {
+      this.set('isShowingModal', true)
     }
+  }
 
-    @alias('rating') numberOfGoldStars
+  @action
+  submitFeedback() {
+    this.get('api').request('/courses/' + this.get('course.id') + '/rating', {
+      method: 'POST',
+      data: {
+        value: this.get('ratingMarkedByUser'),
+        experience: this.get('textExperience'),
+        review: this.get('textPublic')
+      }
+    })
+    this.afterFeedback()
+  }
 
-    @computed('rating', 'scale')
-    get numberOfGreyStars () {
-        return this.scale - this.rating
+  @action
+  afterFeedback() {
+    this.set('isShowingModal', false)
+    this.set('isEditing', false)
+  }
+
+  @action
+  toggleModal (rating) {
+    this.markRating(rating)
+    if (this.get('showModal') == true) {
+      this.toggleProperty('isShowingModal')
+    } else {
+      this.set('textExperience', '')
+      this.set('textPublic', '')
+      this.submitFeedback()
     }
-
-    @action
-    changeRating (val) {
-        this.set('rating', val)
-    }
-
-    @action
-    resetRating () {
-        if (this.get('hasUserMarkedRating')) {
-            this.set('rating', this.get('ratingMarkedByUser'))
-        } else {
-            this.set('rating', this.get('initialRating'))
-        }
-    }
-
-    @action
-    markRating (rating) {
-        this.set('hasUserMarkedRating', true)
-        this.set('ratingMarkedByUser', rating)
-        this.get('api').request('/courses/' + this.get('course.id') + '/rating', {
-            method: 'POST',
-            data: {
-                value: this.get('ratingMarkedByUser'),
-            }
-        })
-    }
+  }
 }

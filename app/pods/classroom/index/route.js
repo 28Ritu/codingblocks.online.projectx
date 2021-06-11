@@ -1,13 +1,19 @@
-import Route from '@ember/routing/route';
+import Route from "@ember/routing/route";
+import { inject as service } from '@ember/service';
 
-export default Route.extend({
-    model () {
-        return this.store.query('run', {
-            enrolled: true
-        })
+export default class ClassroomRoute extends Route {
+  @service headData;
+
+  queryParams = {
+    limit: {
+      defaultValue: 10
     },
-    setupController(controller, model) {
-        this._super(...arguments)
-        controller.set("runs", model)
+    offset: {
+      defaultValue: 0
     }
-});
+  }
+
+  afterModel(model) {
+    this.set("headData.title", "Coding Blocks Online | My Courses");
+  }
+}

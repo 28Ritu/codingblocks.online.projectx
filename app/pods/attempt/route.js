@@ -1,12 +1,62 @@
 import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
+import DS from 'ember-data';
+import AuthenticatedRouteMixin from 'codingblocks-online/mixins/authenticated-route-mixin';
+import { scheduleOnce } from "@ember/runloop";
 
-export default Route.extend({
-    model (params) {
-        return this.store.findRecord('runAttempt', params.runAttemptId)
-    },
-    setupController(controller, model) {
-        this._super(...arguments)
-        controller.set("course", model.get('run.course'))
-        controller.set("sections", model.get("run.course.sections"))
-    }
+export default Route.extend(AuthenticatedRouteMixin, {
+	api: service(),
+  router: service(),
+  productTour: service(),
+  async beforeModel() {
+    this._super(...arguments)
+    await this.productTour.preparePlayerTour()
+    scheduleOnce('afterRender', () => this.productTour.start())
+  },
+	model(params, transition) {
+		return this.store.findRecord('runAttempt', params.runAttemptId, { reload: true })
+			.catch(err => {
+				if (err instanceof DS.AdapterError) {
+					// let's try correcting the runAttemptId
+
+					//stop the current transition
+					transition.abort()
+
+					//get a corrected RunAttempt
+					return this.api.request('/users/correctRunAttempt/'+ params.runAttemptId)
+						.then(result => {
+              // replace url param with corrected runAttemptId
+              const path = window.location.pathname
+							const url = path.replace("/app", "").replace(/player\/\d*\//g, "player/" + result.id + '/')
+							return this.transitionTo(url)
+						})
+						.catch(e => {
+							console.error(e)
+							this.transitionTo('404')
+						})
+				} else {
+					throw err
+				}		
+			});
+	},
+	setupController(controller, model) {
+		controller.set('runAttempt', model)
+		controller.set("run", model.get('run'))
+		controller.set("course", model.get('run.course'))
+		controller.set("sections", model.get("run.sections"))
+	},
+	actions: {
+    willTransition() {
+      this._super(...arguments)
+			window.setTimeout( () => jivo_init(), 5000)
+		},
+    didTransition() {
+      this._super(...arguments)
+			try {
+				jivo_init();
+			} catch (err) {
+				console.log(err)
+			}
+		}
+	}
 });

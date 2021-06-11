@@ -1,6 +1,8 @@
+import { and } from '@ember/object/computed';
 import DS from 'ember-data';
 import { computed } from '@ember/object';
 import env from 'codingblocks-online/config/environment';
+import { isNone, isEmpty } from '@ember/utils';
 
 export default DS.Model.extend({
     name: DS.attr(),
@@ -11,71 +13,86 @@ export default DS.Model.extend({
     promoVideo: DS.attr(),
     coverImage: DS.attr(),
     logo: DS.attr(),
+    badgeUrl: DS.attr(),
+    language: DS.attr(),
+    faq: DS.attr(),
+    slug: DS.attr('string'),
     difficulty: DS.attr('number'),
     categoryName: DS.attr(),
     categoryId: DS.attr('number'),
     doubtSubCategoryId: DS.attr('number'),
     price: computed('fees', 'isFree', function () {
-    if (this.get('isFree'))
+    if (this.isFree)
         return 0
     else
-        return this.get('fees').toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return this.fees.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }),
     popularity: DS.attr(),
     hoursPerDay: DS.attr(),
     isFree: DS.attr(),
     duration: DS.attr(),
     lecturesCount: DS.attr(),
-    ratingCount: DS.attr(),
+    reviewCount: DS.attr(),
     videosDuration: DS.attr(),
     type: DS.attr(),
     color: DS.attr(),
+    buyNowLink: DS.attr(),
     backgroundImage: DS.attr(),
-    totalContents: computed('sections.@each.totalContents', function () {
-      return this.get('sections').reduce( (acc, section) => {
-        return acc + +section.get('totalContents')
-      }, 0)
-    }),
-    topRun: computed('runs', function () {
-        const runs = this.get('runs')
+    rating: DS.attr('number'),
+    seoMeta: DS.attr(),
+    code: DS.attr(),
+    goldenLogo: DS.attr(),
+    topRun: computed('activeRuns', 'runs', function () {
+        let runs = this.activeRuns
+
+        // if we don't have activeRuns
+        if (isNone(runs) || !runs.get('length')) {
+          runs = this.runs
+        }
         const now = +new Date() / 1000.0
-        const currentRun = runs.find( (run, index) => {
-            return run.get('start') < now && run.get('end') > now
+        const currentRuns = runs.filter( (run, index) => {
+            return run.get('enrollmentStart') < now && run.get('enrollmentEnd') > now && !run.get('unlisted')
         })
-        return currentRun || runs.sortBy('start').objectAt(0)
+        return currentRuns.sortBy('price').objectAt(0) || runs.sortBy('price').objectAt(0)
     }),
-    totalContents: computed('sections.@each.contents.@each', function () {
-        //debugger;
-        return this.get('sections').reduce( (acc, section) => {
-            return acc + section.get('contents.length')
-        }, 0)
-    }),
-    completedContents: computed('sections.@each.doneContents', function () {
-        return this.get('sections').reduce( (acc, section) => {
-            return acc + section.get('doneContents.length')
-        }, 0)
-    }),
-    sections: DS.hasMany('section'),
     runs: DS.hasMany('run'),
+    activeRuns: DS.hasMany('run', {inverse: null}),
     instructors: DS.hasMany('instructor'),
     feedbacks: DS.hasMany('feedback'),
     feedback: computed('feedbacks', function () {
-      return this.get('feedbacks').objectAt(0)
-    }),
-    sortedSections: computed('sections.@each', function () {
-      return this.get('sections').sortBy('id')
-    }),
-    canHazDoubtsLink: computed.and('categoryId', 'doubtSubCategoryId'),
-    doubtsLink: computed('categoryId', 'doubtSubCategoryId', function () {
-      return `${env.discussBaseUrl}/c/${this.get('categoryId')}/${this.get('doubtSubCategoryId')}`
+      return this.feedbacks.objectAt(0);
     }),
     difficultyName: computed('difficulty', function () {
-      console.log(this.get('difficulty'))
-      switch(+this.get('difficulty')) {
+      switch(+this.difficulty) {
         case 0: return 'beginner' ; break;
         case 1: return 'advanced'; break;
         case 2: return 'expert'; break
         default: return 'beginner'; break;
       }
-    })
+    }),
+    identifier: computed('slug', 'id', function () {
+      return this.slug || this.id;
+    }),
+    ratings: DS.hasMany('rating'),
+    ratingCarousel: computed('ratings', function(){
+      return this.ratings.map(rating=>{
+        if(isEmpty(rating.get('heading')) && isEmpty(rating.get('review'))){
+          rating.setProperties({shown: false})
+        }else{
+          rating.setProperties({shown: true})
+        }
+        return rating;
+      });
+    }),
+    userRating: computed('ratings', function () {
+      return this.ratings.objectAt(0);
+    }),
+    organization: DS.attr(),
+    coursefeatures: DS.attr(),
+    projects: DS.hasMany('projects'),
+    tags: DS.hasMany("tag"),
+    latestRun: computed('runs', 'runs.topRunAttempt', function() {
+      return this.get('runs').filter(run => run.get('topRunAttempt'))[0]
+    }),
+    userCourseWishlist: DS.belongsTo('userCourseWishlist')
 });

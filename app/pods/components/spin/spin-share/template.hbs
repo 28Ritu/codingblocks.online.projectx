@@ -1,0 +1,36 @@
+<div class="spin-bg-purple py-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 my-3 t-align-c t-align-lg-l">
+        <div class="extra-bold font-md letter-spaced spin-yellow">
+          Running out of spins?
+        </div>
+        <div class="font-sm white mt-4">
+          For every friend who signup with your code gets an extra spin. <br>
+          <span class="bold">You get an extra spin after their successful participation!</span>
+        </div>
+      </div>
+      <div class="d-flex col-lg-6 d-flex align-items-center justify-content-center flex-wrap">
+        <div>
+          <span class="border-dashed white p-2 font-md copy-text" {{on "click" (action 'selectText')}} title="Click To Copy">
+            https://cb.lk/join/{{referralCode}}
+            <EmberTooltip @event="click" @duration="1000">
+              Copied!
+            </EmberTooltip>
+          </span>
+        </div>
+        <div class="ml-5">
+          <span class="font-md pointer white" {{action share 'facebook'}}>
+            <i class="fab fa-2x fa-facebook-f"></i>
+          </span>
+          <span class="ml-4 font-md pointer white" {{action share 'twitter'}}>
+            <i class="fab fa-2x fa-twitter"></i>
+          </span>
+          <span class="ml-4 font-md pointer white" {{action share 'whatsapp'}}>
+            <i class="fab fa-2x fa-whatsapp"></i>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

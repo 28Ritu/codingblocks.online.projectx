@@ -1,27 +1,18 @@
-<div class="card-stack">
+<WAsync @task={{getCarouselCardsTask}} @autoFire="true" as |cards|>
   {{#each cards as |card|}}
-    <div class="card o-layout-card ">
-        <div class="card-image o-image-card">
-            <img src="{{card.img}}">
-        </div>
-        <div class="word-wrap card-heading o-text-card">
-            {{card.title}}
-        </div>
-        <div class="word-wrap card-text">
-            {{card.subtitle}}
-        </div>
-        <div class="button-solid">
-            <a href="{{card.buttonLink}}" style="color: white">
-            <button>{{card.buttonText}}</button>
-            </a>
-        </div>
+  <div class="border-card {{card.theme}} white mt-5 p-lg-5 p-4">
+    <div class="mb-4 s-50x50">
+      <img src="{{card.img}}" alt="Carousel Card">
     </div>
+    <h3 class="bold mb-4">{{card.title}}</h3>
+    <div class="font-normal mb-4">
+      {{card.subtitle}}
+    </div>
+    <div class="button-align-container">
+      <a href="{{card.buttonLink}}" target="_blank" class="button-white button-solid purple">
+        {{card.buttonText}}
+      </a>
+    </div>
+  </div>
   {{/each}}
-
-</div>
-
-<div class="card-stack-btn">
-    <a class="prev" {{action 'prev'}}>&lt;&nbsp;&nbsp;Prev</a>
-    &nbsp;&nbsp;
-    <a class="next" {{action 'next'}}>Next &nbsp;&nbsp;&gt;</a>
-</div>
+</WAsync>

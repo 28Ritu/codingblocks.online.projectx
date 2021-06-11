@@ -1,19 +1,41 @@
 import Controller from '@ember/controller';
-import { computed } from 'ember-decorators/object';
-import { or, alias } from 'ember-decorators/object/computed';
-import { service } from 'ember-decorators/service';
+import { computed } from '@ember/object';
+import { or, alias, bool } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import { action } from '@ember/object';
 
-export default class  ApplicationController extends Controller {
+export default class ApplicationController extends Controller {
   @service router
+  @service session
+  @service layout
+  @service currentUser;
+
+  queryParams = ['utm_campaign', 'utm_source', 'utm_medium', 'utm_term', 'utm_content', 'utm_coupon' ,'code']
+  utm_campaign = null
+  utm_source = null
+  utm_medium = null
+  utm_term = null
+  utm_content = null
+  utm_coupon = null
+  code = null
+
+  @bool("currentUser.organization") isOrgView;
+  
+
   @computed ('router.currentRouteName')
-  isInsideAttemptRoute () {
-    return ['attempt'].includes(this.get('router.currentRouteName').split('.')[0])
+  get isInsideAttemptRoute () {
+    return ['attempt'].includes(this.get('router.currentRouteName')?.split('.')[0])
   }
   @computed ('router.currentRouteName')
-  isInsidePlayer () {
-    return ['player'].includes(this.get('router.currentRouteName').split('.')[0])
+  get isInsidePlayer () {
+    return ['player'].includes(this.get('router.currentRouteName')?.split('.')[0])
   }
 
   @or('isInsidePlayer', 'isInsideAttemptRoute') hideNav
   @alias('isInsideAttemptRoute') hideFooter
+
+  @action
+  setOutsideContainer(el) {
+    this.layout.setOutsideContainer(el)
+  }
 }

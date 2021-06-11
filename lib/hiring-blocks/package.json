@@ -1,0 +1,29 @@
+{
+  "name": "hiring-blocks",
+  "keywords": [
+    "ember-addon",
+    "ember-engine"
+  ],
+  "dependencies": {
+    "ember-cli-htmlbars": "*",
+    "ember-cli-babel": "*",
+    "ember-cli-showdown": "*",
+    "showdown-katex-studdown": "*",
+    "ember-truth-helpers": "*",
+    "ember-concurrency": "*",
+    "ember-concurrency-decorators": "*",
+    "ember-modal-dialog": "*",
+    "ember-moment": "*",
+    "ember-form-for": "*"
+  },
+  "devDependencies": {
+    "ember-simple-auth": "*",
+    "ember-simple-auth-token": "*",
+    "ember-data": "*"
+  },
+  "ember-addon": {
+    "paths": [
+      "../ember-w-pack"
+    ]
+  }
+}

@@ -1,27 +1,58 @@
 import Component from '@ember/component';
-import { service } from 'ember-decorators/service';
-import { task } from 'ember-concurrency';
-import { alias } from 'ember-decorators/object/computed';
-import { readOnly } from 'ember-decorators/object';
- 
+import { inject as service } from '@ember/service';
+import { restartableTask } from 'ember-concurrency-decorators';
+import { alias, reads } from '@ember/object/computed';
+import { action } from '@ember/object';
+import env from "codingblocks-online/config/environment";
+import { getPublicUrl } from "codingblocks-online/utils/browser"
+
 
 export default class RecommendedTaskComponent extends Component {
   @service store;
-  @readOnly
-  @alias("fetchRecommendedCoursesTask.lastSuccessful.value")
+  @service session;
+  @service currentUser
+  @service domain
+
+  @reads("fetchRecommendedCoursesTask.lastSuccessful.value")  
   recommendedCourses;
 
-  constructor () {
-    super(...arguments)
+  @reads("currentUser.organization") organization
+  
+  didReceiveAttrs () {
+    this._super(...arguments)
     this.get('fetchRecommendedCoursesTask').perform()
-}
+  }
 
-  fetchRecommendedCoursesTask = task(function*() {
+  @restartableTask fetchRecommendedCoursesTask = function* ()  {
+    const filter = {
+      recommended: true,
+      unlisted: false
+    }
+
+    if (this.domain.isExternal) {
+      // external
+      filter.domains = {
+        $contains: [this.domain.domain]
+      }
+    }
+
+    if (this.get('organization')) {
+      filter.organization = this.get('organization')
+    }
     return yield this.get("store").query("course", {
-      filter: {
-        recommended: true
-      },
-      include: "instructor,runs"
+      filter,
+      include: "instructors,runs",
+      exclude: "ratings,instructors.*,feedbacks,runs.*,jobs,projects",
+      sort: 'difficulty',
+      page: {
+        limit: 12
+      }
     });
-  });
+  }
+
+  @action
+  logIn() {
+    localStorage.setItem('redirectionPath', this.get('router.currentURL').replace("/app", "/"))
+    window.location.href = `${env.oneauthURL}/oauth/authorize?response_type=code&client_id=${env.clientId}&redirect_uri=${getPublicUrl()}`
+  }
 }

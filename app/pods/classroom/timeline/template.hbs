@@ -1,81 +1,28 @@
-<div class="classroom-container row">
-  <div class="classroom-header-box col-md-6 col-12">
-    <div class="classroom-header row">
-      <div class="classroom-image col-2">
-        <img src={{run.course.logo}}>
-      </div>
-      <div class="classroom-text col-10">
-        {{run.course.title}}
-        <div class="rating mob">
-          {{#rating-stars course=run.course}} {{/rating-stars}}
-        </div>
-      </div>
+{{bread-crumbs tagName="ul" outputStyle="foundation" linkable=true}}
+
+{{#if model.revoked}}
+  <div class="border-card">
+    <div class="t-align-c">
+      <FaIcon @icon="info-circle" @size="5" class="grey" />
     </div>
-    <p class="classroom-para">
-      {{run.course.summary}}
+
+    <p class="font-mds">
+      Your access to this course has been revoked. If you think this is an error, Please contact <a href="mailto:support@codingblocks.com" class="orange">support@codingblocks.com</a> with the following Debug Output
     </p>
-    <div class="rating">
-      {{#rating-stars course=run.course}} {{/rating-stars}}
+
+    <div class="divider-h my-4"></div>
+    <div class="">
+      <div class="d-inline-block bold mb-2">
+        Debug Output
+      </div>
+      <br>
+
+      User ID: <strong>{{currentUser.user.id}}</strong> <br>
+      Oneauth ID: <strong>{{currentUser.user.oneauthId}} </strong> <br>
+      Run ID: <strong>{{model.run.id}} </strong> <br>
+      Run Attempt ID: <strong>{{model.id}} </strong>
     </div>
   </div>
-  <div class="course-progress-box col-md-6 col-12">
-    <div class="course-progress-heading row no-gutters">
-      <div class="heading col-4 col-md-6 align-self-center">Course Progress</div>
-      <div class="divider-h col-6 align-self-center"></div>
-    </div>
-
-    <div class="progress row no-gutters justify-content-around align-items-center">
-      <div class="progress-circle col-3 col-md-3">
-        <div class="status-circle">
-          <div class="circle-back"></div>
-          <div class="circle-front d-flex flex-column justify-content-center">
-            <p class="progress-text">{{percentage run.course.completedContents run.course.totalContents}} %</p>
-          </div>
-        </div>
-      </div>
-      <div class="course-progress-detail col-5 col-md-9">
-        <p class="heading-mob">Course Progress</p>
-        <p class="lectures-completed">{{run.course.completedContents}} of {{run.course.totalContents}} Content completed</p>
-        <p class="reset-progress pointer" {{action 'resetProgress'}}>Reset
-          Progress</p>
-      </div>
-      <div class="offset-md-5 col-4 col-md-5">
-        <div class="button-solid">
-          {{#link-to 'attempt' run.topRunAttempt.id tagName="button" activeClass=""}} Resume Learning {{/link-to}}
-        </div>
-      </div>
-    </div>
-
-
-
-  </div>
-</div>
-<div class="tab-nav">
-  <div class="tab-list">
-    {{link-to 'Overview' 'classroom.timeline.overview' class="tab-items" tagName="div"}}
-    {{#link-to 'classroom.timeline.overview' class="tab-icons" tagName="div"}}
-      <div class="d-flex flex-row justify-content-center height-100">
-        <img src="/images/overview.png" alt="Overview">
-      </div>
-    {{/link-to}}
-    {{link-to 'Course Content' 'classroom.timeline.contents'class="tab-items" tagName="div"}}
-    {{#link-to 'classroom.timeline.contents'class="tab-icons" tagName="div"}}
-      <div class="d-flex flex-row justify-content-center height-100">
-        <img src="/images/progress-ccordian.png" alt="Course Content">
-      </div>
-    {{/link-to}}
-    {{link-to 'Announcements' 'classroom.timeline.announcements'class="tab-items" tagName="div"}}
-    {{#link-to 'classroom.timeline.announcements'class="tab-icons" tagName="div"}}
-      <div class="d-flex flex-row justify-content-center height-100">
-      <img src="/images/announcement.png" alt="Announcements">
-      </div>
-    {{/link-to}}
-    {{link-to 'Solve Your Doubts' 'classroom.timeline.doubts' class="tab-items" tagName="div"}}
-    {{#link-to 'classroom.timeline.doubts' class="tab-icons" tagName="div"}}
-      <div class="d-flex flex-row justify-content-center height-100">
-        <img src="/images/solvedoubt.png" alt="Solve Your Doubts">
-      </div>
-    {{/link-to}}
-  </div>
-</div>
-{{liquid-outlet}}
+{{else}}
+  {{outlet}}
+{{/if}}

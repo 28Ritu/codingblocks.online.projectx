@@ -1,0 +1,76 @@
+<div class="border-card c-run-card ">
+  <h3>
+    {{run.description}}
+  </h3>
+
+  <div class="d-flex mb-4">
+    <div class="font-sm">
+      <div class="grey">
+        Starts
+      </div>
+      <div class="text">
+        {{moment-format (unix run.start) "MMM Do YYYY"}}
+      </div>
+    </div>
+
+    <div class="divider-v bg-grey"></div>
+
+    <div class="font-sm">
+      <div class="grey">
+        Ends
+      </div>
+      <div class="">
+        {{moment-format (unix run.end) "MMM Do YYYY"}}
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-between align-items-center">
+    <div class="col-8 align-self-center">
+      <div class="price">
+        {{format-price run.price}}
+        {{#unless (eq run.mrp run.price)}}
+          <span class="grey card-md">
+            <strike >{{format-price run.mrp}}</strike>
+          </span>
+        {{/unless}}
+      </div>
+      <div class="red">Enrollment ends {{moment-format (unix run.enrollmentEnd) 'MMM Do YYYY'}}</div>
+    </div>
+
+    {{#if course.organization}}
+    {{run-request-button run=run}}
+    {{else}}
+
+    {{#if isFree}}
+    {{#link-to "classroom.timeline.index" course.id run.id tagName="button" class="button-solid col-4" activeClass=""}}
+    Access Now
+    {{/link-to}}
+    {{else}}
+    <button class="button-solid col-4" {{action (perform enrollNowTask run.id)}}>
+      {{if enrollNowTask.isRunning 'Enrolling...' 'Enroll Now'}}
+    </button>
+    {{/if}}
+
+    {{/if}}
+  </div>
+
+  <div class="divider-h"></div>
+
+  <div class="row justify-content-between align-items-center">
+    <div class="col-7 align-self-center">
+      You may also try our
+      free lectures:
+    </div>
+
+    {{#if session.isAuthenticated}}
+    {{#link-to "classroom.timeline.index" course.id run.id tagName="button" class="button-dashed" activeClass="" invokeAction=(action 'log' 'Free trial' course.title)}}
+    Start Free Trial
+    {{/link-to}}
+    {{else}}
+    <button class="button-dashed" {{action logInAndStartTrial course.id run.id}}>
+      Start Free Trial
+    </button>
+    {{/if}}
+  </div>
+</div>

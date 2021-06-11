@@ -1,56 +1,232 @@
-<header>
-  <nav>
-    <span class="hamburger-parent" onclick={{action 'toggleSidebar'}}>
-            <i class="hamburger fas fa-bars"></i>
-          </span>
-    <span>
-      {{#link-to 'index' activeClass=''}}
-      <img src="/images/online-logo.png" alt="online-logo" class="nav-logo pointer"> {{/link-to}}
-    </span>
-
-    <ul class="nav-list">
-      <li class="nav-items pointer">
-        {{#link-to 'index'}}Home{{/link-to}}
-      </li>
-      <li class="nav-items pointer">
-        {{#link-to 'courses'}}All Courses{{/link-to}}
-      </li>
-      {{#if session.isAuthenticated}}
-      <li class="nav-items pointer">
-        {{#link-to 'classroom'}}My Courses{{/link-to}}
-      </li>
-      {{/if}}
-      <li class="nav-items pointer">
-        <div class="button-solid">
-          {{login-button}}
+<div class="row c-topnav py-4 justify-content-between align-items-center" style="height: 70px;">
+  <div class="col-6 px-0">
+    <div class="d-md-none d-block d-flex align-items-center ml-3">
+      <div class="hamburger-menu mr-3">
+        <div class="ham-toggle">
+          <div class="hamburger" {{action 'toggleHamburgerNav'}}>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
         </div>
-      </li>
-    </ul>
-
-   {{search-box}}
-  </nav>
-  <div class="sidebar {{if showSidebar 'display-block' 'display-none'}}">
-    <i class="close fas fa-times" onclick={{action 'toggleSidebar'}}></i>
-    <div class="upper-half">
-      <div class="round-img">
-        <img src="{{user.photo}}">
       </div>
-      <div class="button-solid">
-        {{login-button}}
-      </div>
+      {{#if currentUser.user.orgLogo}}
+        <img src="{{currentUser.user.orgLogo}}" alt="" srcset="" width="40">
+      {{else}}
+        <img src="https://minio.codingblocks.com/motley/online-logo-text.png" alt="" class="d-inline-block w-70">
+      {{/if}}
     </div>
-    <div class="lower-half">
-      <div class="para">
-        {{#link-to 'index'}}Home{{/link-to}}
-      </div>
+  </div>
+  <div class="col-6 offset-1 d-md-block d-none">
+    <ul>
+      {{#unless currentUser.user.organization}}
+      <li class="top-nav-option px-3 d-none d-md-block">
+        <a href="https://codingblocks.com/classroom-courses/" target="blank">
+          <h6>Classroom Courses</h6>
+        </a>
+      </li>
+      {{/unless}}
+      <li class="top-nav-option px-3 d-none d-md-block">
+        <a href="https://hack.codingblocks.com" target="blank">
+          <h6>HackerBlocks</h6>
+        </a>
+      </li>
+      {{!-- <li class="top-nav-option px-3 mt-2 d-none d-md-block">
+        <a href="#hiring-blocks">
+          <h6>Hiring Blocks</h6>
+        </a>
+      </li> --}}
+    </ul>
+  </div>
+  <div class="col-5 align-items-center">
+    <ul class="right-nav pull-right">
       {{#if session.isAuthenticated}}
-        <div class="para">
-          {{#link-to 'classroom'}}My Courses{{/link-to}}
-        </div>
+
+      {{#if walletAmount}}
+        <li class="top-nav-option px-4 d-md-block d-none pointer">
+          <a class="dropdown-li row align-items-center" href={{dukaanUrl}}>
+              <img class="s-20x20" src="https://minio.codingblocks.com/img/wallet-outline.svg" alt=""> 
+              <span class="ml-2 bold">₹ {{walletAmount}}</span>
+          </a>
+        </li>
       {{/if}}
-      <div class="para">
-        {{#link-to 'courses'}}All Courses{{/link-to}}
+      <li class="top-nav-option px-3 d-md-block d-none pointer">
+        {{notification-dropdown toggleAction=toggleNotification activeTab=activeTab}}
+      </li>
+      <li class="top-nav-option px-3 d-md-block d-none pointer">
+        {{dukaan-dropdown toggleAction=toggleCart activeTab=activeTab}}
+      </li>
+      <li class="top-nav-option hoverable px-3 d-md-block d-none">
+        <div class="img-desc align-items-center font-sm">
+          <img class="round s-30x30" src="{{user.photo}}" alt="Profile Pic">
+          <div class="description ml-3">
+            Hi, {{user.fullName}}
+          </div>
+        </div>
+        <div class="pop-up border-card p-3 br-5">
+          <ul class="t-align-l">
+            <li>
+              <a href='https://account.codingblocks.com/users/me'>
+                Profile
+              </a>
+            </li>
+            <div class="divider-h my-3"></div>
+            <li>
+              <a class="dark-grey"  href="/logout" >
+                Logout
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      {{else}}
+      <li>
+        <LoginButton />
+      </li>
+      {{/if}}
+    </ul>
+  </div>
+</div>
+
+<div class="hamburger-nav b-right overflow-y-auto no-scrollbar {{if hideHamburgerNav 'hamburger-nav--hidden' ''}}">
+  <div class="d-flex py-3 justify-content-between align-items-center hamburger-nav__top-bar">
+    <img src="https://minio.codingblocks.com/motley/online-logo-text.png" alt="HB" class="hamburger-nav__ham-logo ml-4">
+    <button class="mr-4 hamburger-nav__cross pointer" {{action 'toggleHamburgerNav'}}>
+      <img src="https://minio.codingblocks.com/motley/wrong_g.png" alt="#">
+    </button>
+  </div>
+  <div class="divider-h"></div>
+
+  {{#if session.isAuthenticated}}
+  <div class="d-flex align-items-center my-4 pl-4">
+    <div class="img-ring s-50x50">
+      <img class="round img" src="{{user.photo}}" alt="ProfilePic">
+    </div>
+
+    <div class="pl-4">
+      <div class="extra-bold gradient-text font-mds">{{user.fullName}}</div>
+      <div href='https://account.codingblocks.com'>
+        <a class="bold orange" href="https://account.codingblocks.com/users/me" {{action 'toggleHamburgerNav'}}>View Profile</a>
       </div>
     </div>
   </div>
-</header>
+  {{/if}}
+  <div class="mt-5 px-4 overflow-y-auto no-scrollbar">
+    <div class="d-flex justify-content-between">
+      <div class="extra-bold orange">Courses</div>
+      <a href="#" class="orange"><i class="fas fa-angle-up fa-lg"></i></a>
+    </div>
+
+    
+    <div class="my-4 pl-4">
+      <div class="hamburger-nav__menu-element {{if (eq mobileSelectedTab "online") "active"}}"
+        {{action (mut mobileSelectedTab) "online"}}>
+        <div class="extra-bold">
+          Online Courses
+        </div>
+        <div class="light"><a href="https://online.codingblocks.com" target="blank" class="orange">Explore
+            All</a></div>
+      </div>
+      {{#if (eq mobileSelectedTab "online")}}
+      <div class="pl-4">
+        <div class="mt-4">
+          <div class="light extra-bold">Beginner Courses</div>
+          <div class="light">
+            <a href="https://online.codingblocks.com/courses/c-plus-plus-online-course-for-beginners">
+              C++ Master Course | Launchpad
+            </a>
+          </div>
+          <div class="light">
+            <a href="https://online.codingblocks.com/courses/complete-java-course-online">
+              Java Master Course | Crux
+            </a>
+          </div>
+          <div class="light">
+            <a href="https://online.codingblocks.com/courses/python-for-beginners-developers">
+              Python For Developers
+            </a>
+          </div>
+        </div>
+        <div class="mt-3">
+          <div class="light extra-bold">Advanced Courses</div>
+          <div class="light">
+            <a href="https://online.codingblocks.com/courses/python-django">
+              Web Dev with Python-Django
+            </a>
+          </div>
+          <div class="light">
+            <a href="https://online.codingblocks.com/courses/coding-interview-preparation-online">
+              Interview Prep Bootcamp
+            </a>
+          </div>
+          <div class="light">
+            <a href="https://online.codingblocks.com/courses/data-structures-and-algorithms-online-course-java-algo">
+              Algo.Java Online
+            </a>
+          </div>
+          <div class="light">
+            <a href="https://online.codingblocks.com/courses/android-app-training-online">
+              Android App Development Online
+            </a>
+          </div>
+          <div class="light">
+            <a href="https://online.codingblocks.com/courses/telegram-chatbot-python-online">
+              Build Chatbots in Python
+            </a>
+          </div>
+        </div>
+        <div class="mt-3">
+          <div class="light extra-bold">Expert Courses</div>
+          <div class="light">
+            <a href="https://online.codingblocks.com/courses/competitive-programming-course-online">
+              Competitive Programming Online
+            </a>
+          </div>
+          <div class="light">
+            <a href="https://online.codingblocks.com/courses/coding-interview-preparation-course-online-c-plus-plus">
+              Interview Preparation - C++
+            </a>
+          </div>
+          <div class="light">
+            <a href="https://online.codingblocks.com/courses/machine-learning-course-online">
+              Machine Learning Master Course
+            </a>
+          </div>
+          <div class="light">
+            <a href="https://online.codingblocks.com/courses/coding-interview-preparation-course-online-java">
+              Interview Preparation - Java
+            </a>
+          </div>
+          <div class="light">
+            <a href="https://online.codingblocks.com/courses/data-science-online-course-python">
+              Data Science
+            </a>
+          </div>
+        </div>
+      </div>
+      {{/if}}
+    </div>
+    {{!-- <div class="light mt-5 mb-4">Products</div> --}}
+    {{!-- <div class="light my-4">Resources</div> --}}
+    <div class="light my-4">
+      <a href="https://codingblocks.com/campus-ambassador-program.html" target="blank">
+        Campus Ambassadors
+      </a>
+    </div>
+    <div class="light my-4">
+      <a href="https://codingblocks.com/about" target="blank">
+        About Us
+      </a>
+    </div>
+    <div class="light my-4">
+      <a href="https://codingblocks.com/centres" target="blank">
+        Contact Us
+      </a>
+    </div>
+    <div class="light my-4">
+      <a class="dark-grey"  href="/logout" >
+        Logout
+      </a>
+    </div>
+  </div>
+</div>

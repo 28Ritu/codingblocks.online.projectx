@@ -1,0 +1,41 @@
+
+<div class="row align-items-center py-5 px-4 bg-gradient-violet-lr border-card">
+  <div class="col-12 col-md-6 white">
+      <h2 class="mb-3">We Have Jobs</h2>
+      <div class="mb-5 font-sm">
+        Get recruited by top multinational companies and get worldwide recognition
+    </div>
+  </div>
+  <div class="col-12 col-md-6 t-align-l t-align-md-r">
+    <div>
+    <img src="https://minio.codingblocks.com/amoeba/companies-logos.png" alt="Partner Logos">
+    </div>
+  </div>
+</div>
+
+
+<div class="divider-h my-4"></div>
+
+  {{#if (or selectedLocations.length selectedJobTypes.length)}}
+    <div class="mb-4">
+      Search results for:
+      {{!-- filter pills --}}
+      {{#each selectedLocations as |location|}}  
+        <button class="button-dashed button-orange" {{action 'removeObject' selectedLocations location}}>
+          {{location}} X
+        </button>
+      {{/each}}
+      {{#each selectedJobTypes as |type|}}  
+        <button class="button-dashed button-orange" {{action 'removeObject' selectedJobTypes type}}>
+          {{type}} X
+        </button>
+      {{/each}}
+    </div>
+  {{/if}}
+
+  <div class="mb-5">
+    {{component activeTab.component 
+      filters=(hash locations=selectedLocations jobTypes=selectedJobTypes)
+    }}
+  </div>
+

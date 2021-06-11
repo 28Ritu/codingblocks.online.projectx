@@ -1,0 +1,81 @@
+<div class="img-card course-card mb-2">
+  <div class="head pt-4" style="background-image: url('{{course.coverImage}}')">
+    <div class="t-align-r">
+      <DifficultyDots 
+        @difficulty={{course.difficulty}} 
+        @difficultyName={{course.difficultyName}} />
+    </div>
+    <h5 class="bold" style="height: 42px;">{{course.title}}</h5>
+    <div class="mt-2">
+      <RatingStarsStatic @rating={{course.rating}} @showValue="true" />
+    </div>
+    <div class="head__course-logo">
+      <img src={{defaultTo course.logo '/images/c++'}} loading="lazy">
+    </div>
+  </div>
+  <div class="px-lg-5 px-4 pt-5 pb-3">
+    <div class="card-mentor mb-4">
+      <div class="card-mentor-image">
+        {{#each course.instructors as |instructor index|}}
+          {{#if (lt index 2) }}
+            <img class="card-mentors" src={{instructor.photo}} loading="lazy">
+          {{/if}}
+        {{/each}}
+      </div>
+      <div class="pl-4">
+        <div class="card-md font-normal">Instructors</div>
+        <div class="bold">
+          {{#each course.instructors as |instructor index|}}
+            {{#if (lt index 2)}}
+              {{if index "," ""}} {{instructor.name}}
+            {{/if}}
+          {{/each}}
+          {{#if (gt course.instructors.length 2)}}
+            <span class="price"> +{{sub course.instructors.length 2}}</span> more
+          {{/if}}
+        </div>
+      </div>
+    </div>
+    <div class="row no-gutters align-items-center justify-content-between">
+      <div class="col-lg-8 col-6">
+        {{#unless isOrgView}}
+          <div>
+            <span class="bold orange font-sm">&#x20b9; {{format-price course.topRun.price}}</span>
+            {{#unless (eq course.topRun.mrp course.topRun.price)}}
+              <span class="card-md bold grey pl-lg-3 pl-1">&#x20b9; <del>{{format-price course.topRun.mrp}}</del></span>
+            {{/unless}}
+          </div>
+        {{/unless}}
+        <div class="card-md mt-1">Batches starting {{moment-format (unix course.topRun.start) 'MMM Do'}}</div>
+      </div>
+      {{#if domain.isExternal}}
+        {{#link-to "courses.id" course.identifier activeClass="" class="button-solid button-orange"
+          invokeAction=(action 'log' 'explore' course.identifier)
+        }}
+          Explore
+        {{/link-to}}
+      {{else}}
+        {{#link-to "courses.id" course.identifier activeClass="" class="button-solid button-orange"
+          invokeAction=(action 'log' 'Explore' course.identifier)
+          }}
+          Explore
+        {{/link-to}}
+      {{/if}}
+    </div>
+    <div class="divider-h my-4"></div>
+    {{#if session.isAuthenticated}}
+      {{#link-to "classroom.timeline.index" course.id course.topRun.id 
+        activeClass="" class="orange t-align-c d-block card-md font-normal"
+        invokeAction=(action 'log' 'Free trial' course.identifier preventDefault=false)}}
+        Try it for Free!
+      {{/link-to}}
+    {{else}}
+      {{#link-to "login"
+        activeClass="" class="orange t-align-c d-block card-md font-normal"
+        invokeAction=(action 'log' 'free trial' course.identifier) 
+        }}
+        Try it for Free!
+      {{/link-to}}
+    {{/if}}
+  </div>
+</div>

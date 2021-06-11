@@ -1,10 +1,17 @@
 import Component from '@ember/component';
-import { computed, action } from 'ember-decorators/object'
-import { service } from 'ember-decorators/service'
-import { task } from 'ember-concurrency'
+import { computed, action } from '@ember/object'
+import { inject as service } from '@ember/service';
+import { restartableTask } from 'ember-concurrency-decorators';
+import { isBadRequestError } from 'ember-ajax/errors';
+import { not } from '@ember/object/computed';
+
 
 export default class otpEnrollComponent extends Component {
   @service api
+  @service currentUser
+
+  // hide this component if user belongs to an org
+  @not('currentUser.organization') isVisible
 
   otpSent = false
   otpVerified = false
@@ -12,7 +19,7 @@ export default class otpEnrollComponent extends Component {
   email = null
   errorString = null
 
-  sendOtpTask = task (function * () {
+  @restartableTask sendOtpTask = function *() {
     return this.get('api').request('otp/request', {
       method: 'POST',
       data: {
@@ -26,12 +33,16 @@ export default class otpEnrollComponent extends Component {
       this.set('otpSent', true);
     })
     .catch(err => {
+      if (isBadRequestError(err)) {
+        this.set('errorString', err.payload.message)
+      } else {
+        this.set('errorString', 'Cannot Sent OTP to that email, some internal error occured. Contact at support@codingblocks.com')
+      }
       console.error(err)
-      this.set('errorString', 'Cannot Send OTP to that email. Please use your registered email.')
     })
-  })
+  }
 
-  verifyOtpTask = task (function * () {
+  @restartableTask verifyOtpTask = function *() {
     return this.get('api').request('otp/verify', {
       method: "POST",
       data: {
@@ -41,10 +52,14 @@ export default class otpEnrollComponent extends Component {
     }).then( () => {
       window.location.reload()
     }).catch(err => {
+      if (isBadRequestError(err)) {
+        this.set('errorString', err.payload.message)
+      } else {
+        this.set('errorString', 'Incorrect OTP')
+      }
       console.error(err)
-      this.set('errorString', 'Incorrect OTP');
     })
-  })
+  }
 
   @computed ('otpSent')
   get placeholderText () {

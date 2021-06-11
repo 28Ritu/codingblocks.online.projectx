@@ -1,0 +1,28 @@
+<div class="p-3 c-qna">
+  <h4 class="bold">
+    {{quiz.title}}
+  </h4>
+
+  <div class="font-sm mt-4">
+    Your Scorecard
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-4 col-lg-3">
+      <div class="font-mdxl bold">{{quiz.questions.length}}</div>
+      <div class="font-md bold">Total Questions</div>
+    </div>
+    <div class="col-md-4 col-lg-3 green">
+      <div class="font-mdxl bold">{{totalCorrect}}</div>
+      <div class="font-md bold">Right Answers</div>
+    </div>
+    <div class="col-md-4 col-lg-3 red">
+      <div class="font-mdxl bold">{{totalIncorrect}}</div>
+      <div class="font-md bold">Wrong Answers</div>
+    </div>
+  </div>
+
+  <div class="mt-5">
+    {{#link-to 'attempt.content' activeClass="" class="button-solid button-orange"}} Go Back {{/link-to}}
+  </div>
+</div>
